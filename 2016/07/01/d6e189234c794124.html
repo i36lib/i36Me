@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+<title>全民夺宝重构细节：幸运码的生成 - 阿北</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="本文记录全民夺宝幸运码生成功能的重构优化。在全民夺宝项目中，每个商品上线会生成一期夺宝，一期夺宝完成之后生成新的一期供用户参与，系统需要自动为每一期生成幸运码。">
+<meta name="keywords" content="Java,全民夺宝,随机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="全民夺宝重构细节：幸运码的生成">
+<meta property="og:url" content="https://i36.Me/2016/07/01/d6e189234c794124.html">
+<meta property="og:site_name" content="阿北">
+<meta property="og:description" content="本文记录全民夺宝幸运码生成功能的重构优化。在全民夺宝项目中，每个商品上线会生成一期夺宝，一期夺宝完成之后生成新的一期供用户参与，系统需要自动为每一期生成幸运码。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2016-07-01T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="全民夺宝重构细节：幸运码的生成">
+<meta name="twitter:description" content="本文记录全民夺宝幸运码生成功能的重构优化。在全民夺宝项目中，每个商品上线会生成一期夺宝，一期夺宝完成之后生成新的一期供用户参与，系统需要自动为每一期生成幸运码。">
+
+
+
+
+
+<link rel="icon" href="/images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-24320647-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-24320647-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="全民夺宝重构细节：幸运码的生成" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/i36lib">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    <!-- 
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/i/SzQ6SyZq9pQSSBm.jpg" alt="全民夺宝重构细节：幸运码的生成">
+        </span>
+    </div>
+     -->
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                全民夺宝重构细节：幸运码的生成
+            
+        </h1>
+        
+            <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
+            <div class="level-left">
+                <i class="fas fa-calendar">&nbsp</i>
+                <time class="level-item has-text-grey" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time>
+                
+                    <i class="fas fa-calendar-check">&nbsp</i>
+                    <time class="level-item has-text-grey" datetime="2016-07-01T16:00:00.000Z">2016-07-02</time>
+                
+                
+                <i class="fas fa-book">&nbsp</i>
+                <span class="level-item has-text-grey">
+                    
+                    
+                    11 分钟 读完 (大约 1687 个字)
+                </span>
+                
+            </div>
+        </div>
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                
+                    <i class="fas fa-folder-open">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </div>
+                
+                
+                    <i class="fas fa-tags">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/tags/Java/">Java</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/全民夺宝/">全民夺宝</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/随机/">随机</a>
+                    </div>
+                
+            </div>
+        </div>
+        
+        <div class="content">
+             
+            <p>本文记录全民夺宝幸运码生成功能的重构优化。在全民夺宝项目中，每个商品上线会生成一期夺宝，一期夺宝完成之后生成新的一期供用户参与，系统需要自动为每一期生成幸运码。<a id="more"></a></p>
+<h2 id="原有情况"><a href="#原有情况" class="headerlink" title="原有情况"></a>原有情况</h2><p>原来的幸运码实现是大于<code>10w</code>元(豪车等)的手动随机生成并放置在文件中不存入MySQL(幸运码太多太大)，这类大额商品是手动发布期数的；小于<code>10w</code>元的自动生成并随机打乱，且不管最低参与价多少，都生成与商品售价相同数量的幸运码；生成的幸运码以JSON形式存储在商品期数表对应的一个字段中(MySQL)。</p>
+<p>重构的目的是要实现：</p>
+<ul>
+<li>不考虑商品价格区间全自动生成幸运码</li>
+<li>根据最低参与价计算，减少幸运码数量</li>
+<li>幸运码不再存储到MySQL，而是另外存储到MongoDB</li>
+<li>幸运码的分配不再直接将号码与用户信息存储到MySQL表，而是以区间索引的方式记录到MongoDB</li>
+</ul>
+<p>一个是改为自动化，一个是引入MongoDB存储幸运码，减少MySQL表数据量降低表读写压力。</p>
+<h2 id="需求梳理"><a href="#需求梳理" class="headerlink" title="需求梳理"></a>需求梳理</h2><p>对于售价为<code>P</code>的商品，最小参与金额为<code>U</code>，其中：<code>P</code>为正整数(单位为元)，<code>U</code>为正整数且是<code>P</code>的因数(默认值为<code>1</code>)；即用户参与夺宝时，花费<code>n*U</code>的金额参与夺宝，可获得<code>n</code>个幸运码(重构后)。</p>
+<p><strong>幸运码定义：</strong>定为<code>8</code>位(千万)，取值范围为<code>1000,000</code>至<code>9999,9999</code>。那么，如何生成幸运码呢？</p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>商品某一期在上线时就需要确定售价<code>P</code>和最小参与金额为<code>U</code>，在这个基础上幸运码的数量<code>N</code>是确定的：<code>N=P/U</code>，一旦幸运码售完，就进入开奖环节。<code>N</code>个幸运码不能重复，且符合幸运码定义。有两种实现方式：</p>
+<ol>
+<li>用户参与夺宝时再即时生成幸运码并分配<ul>
+<li>不容易保障幸运码唯一性</li>
+<li>增加用户出价参与时的接口的耗时</li>
+</ul>
+</li>
+<li>上线新期数时提前生成，用户参与时进行分配<ul>
+<li>提前生成，随机打乱，用户参与时按顺序分配</li>
+</ul>
+</li>
+</ol>
+<p>很显然第一种并不可取，按第二种来实现：幸运码一旦生成就不再改变，为了在用户参与夺宝时提高幸运码的分配效率，幸运码串放置在一个数组中，按顺序分配给用户(只需要加锁控制并发分配即可)，这就要求在生成幸运码时产生的号码是随机的而不是连续的。这个问题最终简化为：</p>
+<blockquote>
+<p>随机生成 N 个从 1 到 N且不重复的正整数</p>
+</blockquote>
+<p>很显然一次遍历就可以生成<code>1</code>到<code>N</code>这<code>N</code>个不重复的正整数，而剩下的问题就是如何高效地随机打乱它：只需要再一次遍历，将当前位置的号码随机与后面未遍历的号码中的某一个进行调换，就可以实现随机打乱它，而随机生成某个范围内的下标，有现成的库可以使用，这样我们就得到一个实现算法：</p>
+<blockquote>
+<ol>
+<li>根据售价P和最小参与金额U计算幸运码的数量N</li>
+<li>一次遍历按顺序生成1到N这N个正整数，不足8位时加上1000,000</li>
+<li>一次遍历随机交换元素位置，以实现打乱生成的幸运码顺序</li>
+<li>得到打乱顺序的幸运码，用户出价参与夺宝时按顺序分配幸运码即可</li>
+</ol>
+</blockquote>
+<h2 id="程序实现"><a href="#程序实现" class="headerlink" title="程序实现"></a>程序实现</h2><p><strong>LuckyNumberBuilder.java</strong></p>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> any; <span class="hljs-comment">// 避免暴露项目敏感细节，此处我替换掉</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.util.Random;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LuckyNumberBuilder</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> LUCKY_NUMBER_MAX = <span class="hljs-number">99999999</span>;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> LUCKY_NUMBER_BASE = <span class="hljs-number">10000000</span>; <span class="hljs-comment">// 1千万</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">verifyPrice</span><span class="hljs-params">(<span class="hljs-keyword">int</span> price, <span class="hljs-keyword">int</span> unit)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (price == <span class="hljs-number">0</span> || price &gt; LUCKY_NUMBER_MAX || price%unit != <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(</span><br><span class="line">                <span class="hljs-string">"商品售价或最低夺宝价无效，售价："</span> + price + <span class="hljs-string">"，夺宝价："</span> + unit</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] build(<span class="hljs-keyword">int</span> price) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> build(price, <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] build(<span class="hljs-keyword">int</span> price, <span class="hljs-keyword">int</span> unit) &#123;</span><br><span class="line">        verifyPrice(price, unit);</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">int</span> luckyNumberCount = price / unit;</span><br><span class="line">        <span class="hljs-keyword">int</span>[] luckyNumbers = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[luckyNumberCount];</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;luckyNumberCount; i++) &#123;</span><br><span class="line">            luckyNumbers[i] = i + <span class="hljs-number">1</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="hljs-keyword">if</span> (i+<span class="hljs-number">1</span> &lt; LUCKY_NUMBER_BASE) &#123;</span><br><span class="line">                luckyNumbers[i] += LUCKY_NUMBER_BASE;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        Random random = <span class="hljs-keyword">new</span> Random();</span><br><span class="line">        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;luckyNumberCount; i++) &#123;</span><br><span class="line">            <span class="hljs-comment">//随机选择一个 i~N 之间的下标</span></span><br><span class="line">            <span class="hljs-keyword">int</span> swapIndex = random.nextInt(luckyNumberCount - i) + i;</span><br><span class="line">            </span><br><span class="line">            <span class="hljs-keyword">int</span> temp = luckyNumbers[i];</span><br><span class="line">            luckyNumbers[i] = luckyNumbers[swapIndex];</span><br><span class="line">            luckyNumbers[swapIndex] = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">return</span> luckyNumbers;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="效率分析"><a href="#效率分析" class="headerlink" title="效率分析"></a>效率分析</h2><p>两个<code>for</code>遍历<code>N</code>次，时间复杂度为<code>O(2N)</code>亦即<code>O(n)</code>级别，已经可以接受。显而易见的是，价格越高，生成的幸运码数量就可能越多，幸运码数量和占用空间的大小是随着价格的升高而线性增加的，所以空间的复杂度也在<code>O(n)</code>级别。</p>
+<h2 id="优化讨论"><a href="#优化讨论" class="headerlink" title="优化讨论"></a>优化讨论</h2><p>一个幸运码为一个数字，占用<code>4</code>个字节，考虑一下几种情况下生成幸运码的内存消耗情况：</p>
+<ol>
+<li><p>考虑一个商品价格千万或百万级别的情况，这种情况下商品可能是豪宅别墅、普通商品房、或者豪车，这类商品吸引力大，一般最低参与价格为<code>1</code>元，以让所有人有最大的意愿参与，那么幸运码将会有千万个，为最低参与价格为<code>1</code>元的商品生成幸运码所需要的内存为：</p>
+ <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(5000*10000 / 1) * 4 / 1000 / 1000 = 200 (MB)   // 5kw商品，一般没有（树大招风）</span><br><span class="line">(1000*10000 / 1) * 4 / 1000 / 1000 = 40 (MB)    // 1kw商品，一般也不上（树大招风）</span><br><span class="line">(500*10000 / 1) * 4 / 1000 / 1000 = 20 (MB)     // 500w，超跑豪车，基本上是最大价格的商品</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>而考虑大多数常见的商品价格情况，基本处在<code>万元</code>级别以下：</p>
+ <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(10*10000 / 1) * 4 / 1000 = 400 (KB)            // 10w，一般没有这个价格的商品</span><br><span class="line">(5*10000 / 1) * 4 / 1000 = 200 (KB)             // 5w，高级相机、手表等，高配苹果产品等</span><br><span class="line">(10000 / 1) * 4 / 1000 = 40 (KB)                // 1w，绝大多数商品处在这个价格级别,及低于</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>也就是说按照这个实现方案，大多数商品的换期生成抽奖号码所消耗的CPU和内存资源都会比较平稳，资源耗用量不高，而少数情况下，豪车等顶级商品（500w级别）换期时会有一个小波峰，但处在可接受范围。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Java/">Java</a>, <a class="has-link-grey -link" href="/tags/全民夺宝/">全民夺宝</a>, <a class="has-link-grey -link" href="/tags/随机/">随机</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+            <p style="padding-bottom: 1rem">
+            <span id="busuanzi_container_page_pv">
+               本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+            </span>
+            </p>
+        
+        
+            <div class="social-share"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css">
+<script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script>
+            <!-- <div class="share-component" data-disabled="google, twitter, facebook, tencent, douban, linkedin"></div> -->
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wxpay.jpg" alt="微信"></div>
+</a>
+
+                
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2019/03/01/b7863297bbd9f2f618.html">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">MySQL与Postgres的比较</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2016/01/12/7ee4c380575e4507a.html">
+                <span class="level-item">使用Nginx/uWSGI部署Django项目</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://i36.Me/2016/07/01/d6e189234c794124.html';
+        this.page.identifier = 'd6e189234c794124';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'i36me' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+
+</div>
+                 
+                    
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left is-sticky">
+    
+    
+        <div class="column-right-shadow  ">
+            
+                
+<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
+<div class="card widget" id="toc" style="overflow: auto;">
+    <div class="card-content">
+        <div class="menu" style="max-height: 500px; overflow: auto;">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a href="#原有情况">
+        <span class="has-mr-6">1</span>
+        <span>原有情况</span>
+        </a></li><li>
+        <a href="#需求梳理">
+        <span class="has-mr-6">2</span>
+        <span>需求梳理</span>
+        </a></li><li>
+        <a href="#问题分析">
+        <span class="has-mr-6">3</span>
+        <span>问题分析</span>
+        </a></li><li>
+        <a href="#程序实现">
+        <span class="has-mr-6">4</span>
+        <span>程序实现</span>
+        </a></li><li>
+        <a href="#效率分析">
+        <span class="has-mr-6">5</span>
+        <span>效率分析</span>
+        </a></li><li>
+        <a href="#优化讨论">
+        <span class="has-mr-6">6</span>
+        <span>优化讨论</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+            
+                
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-28T16:00:00.000Z">2019-03-01</time></div>
+                    <a href="/2019/03/01/b7863297bbd9f2f618.html" class="has-link-black-ter is-size-6">MySQL与Postgres的比较</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/MySQL/">MySQL</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/07/01/d6e189234c794124.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/SzQ6SyZq9pQSSBm.jpg" alt="全民夺宝重构细节：幸运码的生成">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
+                    <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/01/12/7ee4c380575e4507a.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/5IjsBmMdWfvpNSG.png" alt="使用Nginx/uWSGI部署Django项目">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-01-11T16:00:00.000Z">2016-01-12</time></div>
+                    <a href="/2016/01/12/7ee4c380575e4507a.html" class="has-link-black-ter is-size-6">使用Nginx/uWSGI部署Django项目</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/26/674d696d60c44ee7b.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/TdWDkbOpXxMQBtf.jpg" alt="基于UTL_TCP实现FTP传输文件">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-25T16:00:00.000Z">2015-12-26</time></div>
+                    <a href="/2015/12/26/674d696d60c44ee7b.html" class="has-link-black-ter is-size-6">基于UTL_TCP实现FTP传输文件</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/21/254796bcaedf4dfc9.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/meP7GEgIAihkZT3.jpg" alt="快速开发美观的HTML报表">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-20T16:00:00.000Z">2015-12-21</time></div>
+                    <a href="/2015/12/21/254796bcaedf4dfc9.html" class="has-link-black-ter is-size-6">快速开发美观的HTML报表</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+            
+                <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">7</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+            
+                <!-- <div class="card widget">
+    
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C++</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Django/">
+                        <span class="level-start">
+                            <span class="level-item">Django</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/EBS/">
+                        <span class="level-start">
+                            <span class="level-item">EBS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">6</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/FTP/">
+                        <span class="level-start">
+                            <span class="level-item">FTP</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GNome/">
+                        <span class="level-start">
+                            <span class="level-item">GNome</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Hexo/">
+                        <span class="level-start">
+                            <span class="level-item">Hexo</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Java/">
+                        <span class="level-start">
+                            <span class="level-item">Java</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/MySQL/">
+                        <span class="level-start">
+                            <span class="level-item">MySQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Oracle/">
+                        <span class="level-start">
+                            <span class="level-item">Oracle</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/PLSQL/">
+                        <span class="level-start">
+                            <span class="level-item">PLSQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Postgres/">
+                        <span class="level-start">
+                            <span class="level-item">Postgres</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RSA/">
+                        <span class="level-start">
+                            <span class="level-item">RSA</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSH/">
+                        <span class="level-start">
+                            <span class="level-item">SSH</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSL/">
+                        <span class="level-start">
+                            <span class="level-item">SSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">Ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/全民夺宝/">
+                        <span class="level-start">
+                            <span class="level-item">全民夺宝</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存/">
+                        <span class="level-start">
+                            <span class="level-item">内存</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存对齐/">
+                        <span class="level-start">
+                            <span class="level-item">内存对齐</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/博客/">
+                        <span class="level-start">
+                            <span class="level-item">博客</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/数据库/">
+                        <span class="level-start">
+                            <span class="level-item">数据库</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/源/">
+                        <span class="level-start">
+                            <span class="level-item">源</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/生活/">
+                        <span class="level-start">
+                            <span class="level-item">生活</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/白云山/">
+                        <span class="level-start">
+                            <span class="level-item">白云山</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/随机/">
+                        <span class="level-start">
+                            <span class="level-item">随机</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/集群/">
+                        <span class="level-start">
+                            <span class="level-item">集群</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div> -->
+            
+        </div>
+    
+</div>
+
+
+                
+            </div>
+        </div>
+    </section>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="全民夺宝重构细节：幸运码的生成" height="28">
+                
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                    </span>
+                    <span id="busuanzi_container_site_uv">
+                      &nbsp;&nbsp;&nbsp;本站访客数<span id="busuanzi_value_site_uv"></span>人次
+                    </span>
+                    <span id="timeDate" class="is-size-7">&nbsp;&nbsp;&nbsp;载入天数...</span>
+                    <span id="times" class="is-size-7">&nbsp;&nbsp;&nbsp;载入时分秒...</span>
+                </p>
+                <p class="is-size-7">
+                &copy; 2020 阿北&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+                <script>
+                    var now = new Date(); 
+                    function createtime() { 
+                        var grt = new Date("10/01/2015 16:49:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime()+250); 
+                        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp;&nbsp;"+"本站已安全运行 "+dnum+" 天 "; 
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+                    } 
+                setInterval("createtime()",250);
+                </script>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</body>
+</html>

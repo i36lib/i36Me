@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+<title>C/C++结构体的内存对齐 - 阿北</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="内存对齐是编译器做的事情，但程序员如果明白其中的原理，将有助于写出更好的程序。在C/C++的结构体(Struct)当中，各个不同类型的成员的先后排列次序极大的可能会影响到该结构体占用内存空间的大小。先来看一个例子，在这个例子当中定义两个结构体，里面的成员是一样的，区别只在于排列顺序不同。">
+<meta name="keywords" content="C,C++,内存对齐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C&#x2F;C++结构体的内存对齐">
+<meta property="og:url" content="https://i36.Me/2015/10/06/4596d72ad01f47bf.html">
+<meta property="og:site_name" content="阿北">
+<meta property="og:description" content="内存对齐是编译器做的事情，但程序员如果明白其中的原理，将有助于写出更好的程序。在C/C++的结构体(Struct)当中，各个不同类型的成员的先后排列次序极大的可能会影响到该结构体占用内存空间的大小。先来看一个例子，在这个例子当中定义两个结构体，里面的成员是一样的，区别只在于排列顺序不同。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i36.me/i/Fbn7RXfmhDLKTrx.png">
+<meta property="og:updated_time" content="2015-10-05T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C&#x2F;C++结构体的内存对齐">
+<meta name="twitter:description" content="内存对齐是编译器做的事情，但程序员如果明白其中的原理，将有助于写出更好的程序。在C/C++的结构体(Struct)当中，各个不同类型的成员的先后排列次序极大的可能会影响到该结构体占用内存空间的大小。先来看一个例子，在这个例子当中定义两个结构体，里面的成员是一样的，区别只在于排列顺序不同。">
+<meta name="twitter:image" content="https://i36.me/i/Fbn7RXfmhDLKTrx.png">
+
+
+
+
+
+<link rel="icon" href="/images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-24320647-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-24320647-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="C/C++结构体的内存对齐" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/i36lib">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    <!-- 
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/i/Q6ViCoupR4T2WeL.png" alt="C/C++结构体的内存对齐">
+        </span>
+    </div>
+     -->
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                C/C++结构体的内存对齐
+            
+        </h1>
+        
+            <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
+            <div class="level-left">
+                <i class="fas fa-calendar">&nbsp</i>
+                <time class="level-item has-text-grey" datetime="2015-10-05T16:00:00.000Z">2015-10-06</time>
+                
+                
+                <i class="fas fa-book">&nbsp</i>
+                <span class="level-item has-text-grey">
+                    
+                    
+                    12 分钟 读完 (大约 1726 个字)
+                </span>
+                
+            </div>
+        </div>
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                
+                    <i class="fas fa-folder-open">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/C-C/">C/C++</a>
+                    </div>
+                
+                
+                    <i class="fas fa-tags">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/tags/C/">C</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/C/">C++</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/内存对齐/">内存对齐</a>
+                    </div>
+                
+            </div>
+        </div>
+        
+        <div class="content">
+             
+            <p>内存对齐是编译器做的事情，但程序员如果明白其中的原理，将有助于写出更好的程序。在C/C++的结构体(Struct)当中，各个不同类型的成员的先后排列次序极大的可能会影响到该结构体占用内存空间的大小。先来看一个例子，在这个例子当中定义两个结构体，里面的成员是一样的，区别只在于排列顺序不同。</p>
+<a id="more"></a>
+
+<h2 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h2><figure class="highlight cpp hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/* #pragma pack(8) */</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/* Under x86-64bit CPU, Fedora22, GCC, default pack(8) */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="hljs-function"></span>&#123;</span><br><span class="line">    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Test1</span>&#123;</span> <span class="hljs-comment">/* logical address start with 0 */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar1; <span class="hljs-comment">/* map address 0, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar1; <span class="hljs-comment">/* map address 4, size 1 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar2; <span class="hljs-comment">/* map address 8, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">double</span> dvar1; <span class="hljs-comment">/* map address 16, size 8 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> *pivar; <span class="hljs-comment">/* map address 24, size 8 Bytes(8x8bit=64bit) */</span></span><br><span class="line">        <span class="hljs-keyword">float</span> *pfvar; <span class="hljs-comment">/* map address 32, size 8 Bytes(8x8bit=64bit) */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar2; <span class="hljs-comment">/* map address 40, size 1 Bytes */</span></span><br><span class="line">    &#125;; <span class="hljs-comment">/* End of address 41, size: (41/8)*8+41%8=48 Bytes */</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Test2</span> &#123;</span> <span class="hljs-comment">/* logical address start with 0 */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar1; <span class="hljs-comment">/* map address 0, size 1 Byte */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar2; <span class="hljs-comment">/* map address 1, size 1 Byte */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar1; <span class="hljs-comment">/* map address 4, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar2; <span class="hljs-comment">/* map address 8, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">double</span> dvar1; <span class="hljs-comment">/* map address 16, size 8 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> *pivar; <span class="hljs-comment">/* map address 24, size 8 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">float</span> *pfvar; <span class="hljs-comment">/* map address 32, size 8 Bytes */</span></span><br><span class="line">    &#125;; <span class="hljs-comment">/* End of address 40, size: (40/8)*8+40%8=40 Bytes */</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Size of struct Test1: %d Bytes.\n"</span>, <span class="hljs-keyword">sizeof</span>(struct Test1));</span><br><span class="line">    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Size of struct Test2: %d Bytes.\n"</span>, <span class="hljs-keyword">sizeof</span>(struct Test2));</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</span><br><span class="line">&#125; <span class="hljs-comment">/* main */</span></span><br></pre></td></tr></table></figure>
+
+<p>在Fedora22/Gcc下的测试：</p>
+<figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[fury@localhost clabs]$ gcc -o exe struct.c -g</span><br><span class="line">[fury@localhost clabs]$ ./exe</span><br><span class="line">Size of struct Test1: 48 Bytes.</span><br><span class="line">Size of struct Test2: 40 Bytes.</span><br><span class="line">[fury@localhost clabs]$</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，排列顺序的不同使得内存占用大小相差了8个字节。或者将结构体这么排列，虽然结果还是40Bytes，但成员的对齐已经发生变化了，经过对比或许你能理解得更清晰：</p>
+<figure class="highlight cpp hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Test3</span> &#123;</span> <span class="hljs-comment">/* logical address start with 0 */</span></span><br><span class="line">    <span class="hljs-keyword">int</span> ivar1; <span class="hljs-comment">/* map address 0, size 4 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">int</span> ivar2; <span class="hljs-comment">/* map address 4, size 4 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">double</span> dvar1; <span class="hljs-comment">/* map address 8, size 8 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">int</span> *pivar; <span class="hljs-comment">/* map address 16, size 8 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">float</span> *pfvar; <span class="hljs-comment">/* map address 24, size 8 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">char</span> cvar1; <span class="hljs-comment">/* map address 32, size 1 Byte */</span></span><br><span class="line">    <span class="hljs-keyword">char</span> cvar2; <span class="hljs-comment">/* map address 33, size 1 Byte */</span></span><br><span class="line">&#125;; <span class="hljs-comment">/* End of address 34, size: (34/8)*8+34%8=40 Bytes */</span></span><br></pre></td></tr></table></figure>
+
+<p>到了这里，依靠代码的注释或许你已经看出一些端倪了。先解释几个关键点，然后再结合上面的代码例子来分析。</p>
+<h3 id="内存编址"><a href="#内存编址" class="headerlink" title="内存编址"></a>内存编址</h3><p>以<code>x86架构CPU</code>为例。内存基本单元的大小是<code>1Byte(8bit)</code>，若是<code>32位</code>机即数据总线宽度为32位，可<code>同时</code>传输32个0/1位，以一个字节编一个地址，根据排列组合原理就有2^32个地址，每个地址是一个内存单元，大小为1Byte(8bit)，则该CPU最大内存寻址能力将为<code>2^32 x 8bit = 4 x 2^30 x 1Byte = 4 x 1G x 1Byte = 4GBytes(即4GB)</code>。这就是通常所说的32机理论可使用最大内存为4GB，同理<code>64位</code>机就是2^64字节。<br><img src="/i/Fbn7RXfmhDLKTrx.png" alt="内存结构示意图"></p>
+<h3 id="对齐系数"><a href="#对齐系数" class="headerlink" title="对齐系数"></a>对齐系数</h3><p>每个编译器都有自己默认的对齐系数。以x86-64/Fedora22为例，gcc的默认对齐系数是8，为什么是8呢？因为机器是64位，而8位是一个字节，<code>64bit/8bit=8Bytes</code>，也就是说它一下子可以取8个字节。所以若是32位机，那么最佳的对齐系数应该为4。可以在代码中使用<code>#pragma pack(n) /* n取1,2,4,8,16即2的整次幂 */</code>来更改编译器默认的对齐系数。</p>
+<h3 id="类型大小"><a href="#类型大小" class="headerlink" title="类型大小"></a>类型大小</h3><ol>
+<li><strong>char：</strong><code>1</code> Byte.</li>
+<li><strong>short：</strong><code>2</code> Bytes.</li>
+<li><strong>int：</strong><code>4</code> Bytes.</li>
+<li><strong>long：</strong><code>4</code> Bytes. —— 32位机.</li>
+<li><strong>long：</strong><code>8</code> Bytes. —— 64位机.</li>
+<li><strong>float：</strong><code>4</code> Bytes.</li>
+<li><strong>double：</strong><code>8</code> Bytes.</li>
+<li><strong>long long：</strong><code>8</code> Bytes.</li>
+<li><strong>long double：</strong><code>8</code> Bytes(VC++)，<code>12</code> Bytes(GCC).  —— 32位机.</li>
+<li><strong>long double：</strong><code>8</code> Bytes(VC++)，<code>16</code> Bytes(GCC).  —— 64位机.</li>
+<li><strong>pointer：</strong><code>4</code> Bytes.  —— 32位机.</li>
+<li><strong>pointer：</strong><code>8</code> Bytes.  —— 64位机.</li>
+</ol>
+<h3 id="成员对齐"><a href="#成员对齐" class="headerlink" title="成员对齐"></a>成员对齐</h3><p>指结构体中数据成员的地址对齐。假定结构体的起始逻辑地址为0，各成员的偏移地址按顺序对齐，第一个成员对齐到0，接下来的成员对齐到<code>Min(成员类型大小，对齐系数)的倍数地址</code>。如在对齐系数为8的情况下，char可以对齐到任意一个地址，int应该对齐到4n(n取自然数)，32位机指针对齐到4n，64位机指针对齐到8n，float对齐到4n，double对齐到8n，等等。</p>
+<h3 id="结构对齐"><a href="#结构对齐" class="headerlink" title="结构对齐"></a>结构对齐</h3><p>指结构体整体对齐。结构体的<code>结束地址</code>要对齐到<code>Min(最大成员类型大小，对齐系数)的倍数地址</code>。如对齐系数为<code>8</code>，假定结构体内只有<code>char</code>、<code>int</code>两种类型，则最大的类型为<code>int</code>即占据内存大小最大的类型为<code>4</code>字节，而<code>Min(4,8)=4</code>，所以结构体结束地址应该为<code>4n</code>(<code>n</code>取整数，<code>n&gt;1</code>)。</p>
+<p>下面以Test1为例来分析代码(对齐系数为8)，Test2/Test3是一样的道理。</p>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><ul>
+<li><code>int ivar1</code>： 第一个成员，它将对齐到<code>min(4,8)*n</code>，对齐到地址<code>0</code>；</li>
+<li><code>char cvar1</code>： 由于上一个成员占据了4个字节，所以它对齐到<code>min(1,8)*n</code>，对齐到地址<code>4</code>；</li>
+<li><code>int ivar2：</code> 上一个成员占据1个字节，而5将是其最小开始地址，但要对齐到<code>min(4,8)*n</code>，所以这里将会对齐到地址<code>8</code>，于是你便可以知道在char cvar1之后，空出了3个字节空间；</li>
+<li><code>double dvar1</code>： 由上一个成员的分析，同理可知它将对齐到<code>min(8,8)*n</code>，对齐到地址<code>16</code>，前面空出4个字节；</li>
+<li><code>int *pivar</code>： 64位机器内指针为8字节，上一个成员占据8字节，它对齐到<code>min(8,8)*n</code>，对齐到地址<code>24</code>；</li>
+<li><code>float *pfvar</code>： 也是指针，对齐到<code>min(8,8)*n</code>，对齐到地址<code>32</code>；</li>
+<li><code>char cvar2</code>： 大小为1字节，上一个大小为8字节，这里对齐到<code>min(1,8)*n</code>，对齐到地址<code>40</code>；</li>
+<li><code>struct Test1</code>： 最后一个成员大小为1字节，结构体结束于41。即到目前为止结构体已经占据从0到40共41个字节，开始做整体对齐，它应该对齐到<code>min(max(member type size), 8)*n</code>即<code>min(8,8)*n</code>，对齐到<code>48</code>，因为41往后8的最小倍数就是48；于是结构体占据的空间为0到47共48个字节，最后空出7个字节。</li>
+</ul>
+<p>参照代码注释，即可同理分析struct Test2和struct Test3。<code>注意：</code>有一种理解误区是，单纯地将各个成员大小相加然后做整体对齐，这是错误的。关键点在于要理解是每个成员以及结构体本身的地址要映射到内存地址。通过更改对齐系数，会改变结构体占据内存的大小，很显然，当对齐系数为1的时候，大小就直接是各个成员大小之和了，但这样不见得会使程序的效率提高。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li><a href="https://en.wikipedia.org/wiki/Data_structure_alignment" target="_blank" rel="noopener">Data Structure Alignment</a></li>
+<li><a href="http://www.geeksforgeeks.org/memory-layout-of-c-program/" target="_blank" rel="noopener">Memory Layout of C Programs</a></li>
+<li><a href="http://www.ibm.com/developerworks/library/pa-dalign/" target="_blank" rel="noopener">Data alignment: Straighten up and fly right</a></li>
+</ol>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/C/">C</a>, <a class="has-link-grey -link" href="/tags/C/">C++</a>, <a class="has-link-grey -link" href="/tags/内存对齐/">内存对齐</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+            <p style="padding-bottom: 1rem">
+            <span id="busuanzi_container_page_pv">
+               本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+            </span>
+            </p>
+        
+        
+            <div class="social-share"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css">
+<script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script>
+            <!-- <div class="share-component" data-disabled="google, twitter, facebook, tencent, douban, linkedin"></div> -->
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wxpay.jpg" alt="微信"></div>
+</a>
+
+                
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2015/10/18/d2565847705d4c7f.html">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">观日落：白云山晚望</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2015/10/06/98e684fc1797454ca.html">
+                <span class="level-item">C/C++程序的内存布局与内存泄漏</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://i36.Me/2015/10/06/4596d72ad01f47bf.html';
+        this.page.identifier = '4596d72ad01f47bf';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'i36me' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+
+</div>
+                 
+                    
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left is-sticky">
+    
+    
+        <div class="column-right-shadow  ">
+            
+                
+<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
+<div class="card widget" id="toc" style="overflow: auto;">
+    <div class="card-content">
+        <div class="menu" style="max-height: 500px; overflow: auto;">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a href="#一个例子">
+        <span class="has-mr-6">1</span>
+        <span>一个例子</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#内存编址">
+        <span class="has-mr-6">1.1</span>
+        <span>内存编址</span>
+        </a></li><li>
+        <a href="#对齐系数">
+        <span class="has-mr-6">1.2</span>
+        <span>对齐系数</span>
+        </a></li><li>
+        <a href="#类型大小">
+        <span class="has-mr-6">1.3</span>
+        <span>类型大小</span>
+        </a></li><li>
+        <a href="#成员对齐">
+        <span class="has-mr-6">1.4</span>
+        <span>成员对齐</span>
+        </a></li><li>
+        <a href="#结构对齐">
+        <span class="has-mr-6">1.5</span>
+        <span>结构对齐</span>
+        </a></li><li>
+        <a href="#代码分析">
+        <span class="has-mr-6">1.6</span>
+        <span>代码分析</span>
+        </a></li></ul></li><li>
+        <a href="#参考资料">
+        <span class="has-mr-6">2</span>
+        <span>参考资料</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+            
+                
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-28T16:00:00.000Z">2019-03-01</time></div>
+                    <a href="/2019/03/01/b7863297bbd9f2f618.html" class="has-link-black-ter is-size-6">MySQL与Postgres的比较</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/MySQL/">MySQL</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/07/01/d6e189234c794124.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/SzQ6SyZq9pQSSBm.jpg" alt="全民夺宝重构细节：幸运码的生成">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
+                    <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/01/12/7ee4c380575e4507a.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/5IjsBmMdWfvpNSG.png" alt="使用Nginx/uWSGI部署Django项目">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-01-11T16:00:00.000Z">2016-01-12</time></div>
+                    <a href="/2016/01/12/7ee4c380575e4507a.html" class="has-link-black-ter is-size-6">使用Nginx/uWSGI部署Django项目</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/26/674d696d60c44ee7b.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/TdWDkbOpXxMQBtf.jpg" alt="基于UTL_TCP实现FTP传输文件">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-25T16:00:00.000Z">2015-12-26</time></div>
+                    <a href="/2015/12/26/674d696d60c44ee7b.html" class="has-link-black-ter is-size-6">基于UTL_TCP实现FTP传输文件</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/21/254796bcaedf4dfc9.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/meP7GEgIAihkZT3.jpg" alt="快速开发美观的HTML报表">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-20T16:00:00.000Z">2015-12-21</time></div>
+                    <a href="/2015/12/21/254796bcaedf4dfc9.html" class="has-link-black-ter is-size-6">快速开发美观的HTML报表</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+            
+                <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">7</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+            
+                <!-- <div class="card widget">
+    
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C++</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Django/">
+                        <span class="level-start">
+                            <span class="level-item">Django</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/EBS/">
+                        <span class="level-start">
+                            <span class="level-item">EBS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">6</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/FTP/">
+                        <span class="level-start">
+                            <span class="level-item">FTP</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GNome/">
+                        <span class="level-start">
+                            <span class="level-item">GNome</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Hexo/">
+                        <span class="level-start">
+                            <span class="level-item">Hexo</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Java/">
+                        <span class="level-start">
+                            <span class="level-item">Java</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/MySQL/">
+                        <span class="level-start">
+                            <span class="level-item">MySQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Oracle/">
+                        <span class="level-start">
+                            <span class="level-item">Oracle</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/PLSQL/">
+                        <span class="level-start">
+                            <span class="level-item">PLSQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Postgres/">
+                        <span class="level-start">
+                            <span class="level-item">Postgres</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RSA/">
+                        <span class="level-start">
+                            <span class="level-item">RSA</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSH/">
+                        <span class="level-start">
+                            <span class="level-item">SSH</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSL/">
+                        <span class="level-start">
+                            <span class="level-item">SSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">Ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/全民夺宝/">
+                        <span class="level-start">
+                            <span class="level-item">全民夺宝</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存/">
+                        <span class="level-start">
+                            <span class="level-item">内存</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存对齐/">
+                        <span class="level-start">
+                            <span class="level-item">内存对齐</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/博客/">
+                        <span class="level-start">
+                            <span class="level-item">博客</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/数据库/">
+                        <span class="level-start">
+                            <span class="level-item">数据库</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/源/">
+                        <span class="level-start">
+                            <span class="level-item">源</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/生活/">
+                        <span class="level-start">
+                            <span class="level-item">生活</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/白云山/">
+                        <span class="level-start">
+                            <span class="level-item">白云山</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/随机/">
+                        <span class="level-start">
+                            <span class="level-item">随机</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/集群/">
+                        <span class="level-start">
+                            <span class="level-item">集群</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div> -->
+            
+        </div>
+    
+</div>
+
+
+                
+            </div>
+        </div>
+    </section>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="C/C++结构体的内存对齐" height="28">
+                
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                    </span>
+                    <span id="busuanzi_container_site_uv">
+                      &nbsp;&nbsp;&nbsp;本站访客数<span id="busuanzi_value_site_uv"></span>人次
+                    </span>
+                    <span id="timeDate" class="is-size-7">&nbsp;&nbsp;&nbsp;载入天数...</span>
+                    <span id="times" class="is-size-7">&nbsp;&nbsp;&nbsp;载入时分秒...</span>
+                </p>
+                <p class="is-size-7">
+                &copy; 2020 阿北&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+                <script>
+                    var now = new Date(); 
+                    function createtime() { 
+                        var grt = new Date("10/01/2015 16:49:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime()+250); 
+                        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp;&nbsp;"+"本站已安全运行 "+dnum+" 天 "; 
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+                    } 
+                setInterval("createtime()",250);
+                </script>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</body>
+</html>

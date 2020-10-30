@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+<title>快速开发美观的HTML报表 - 阿北</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="在项目实施的过程当中，功能顾问与客户沟通需求出好需求文档，技术顾问按需求文档开发报表。有一些非严格性要求的报表客户可能只是拿来看看，对对帐对对数据，这类报表不需要输出成为PDF格式，只需要输出到HTML或者Excel当中进行查看，但同时客户又提供了一个美观可展示的模板，功能顾问往往在Excel当中做好这个模板然后提供在需求开发文档中，例如下图">
+<meta name="keywords" content="Oracle,EBS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速开发美观的HTML报表">
+<meta property="og:url" content="https://i36.Me/2015/12/21/254796bcaedf4dfc9.html">
+<meta property="og:site_name" content="阿北">
+<meta property="og:description" content="在项目实施的过程当中，功能顾问与客户沟通需求出好需求文档，技术顾问按需求文档开发报表。有一些非严格性要求的报表客户可能只是拿来看看，对对帐对对数据，这类报表不需要输出成为PDF格式，只需要输出到HTML或者Excel当中进行查看，但同时客户又提供了一个美观可展示的模板，功能顾问往往在Excel当中做好这个模板然后提供在需求开发文档中，例如下图">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i36.me/i/meP7GEgIAihkZT3.jpg">
+<meta property="og:image" content="https://i36.me/i/xiAY3MjeclbEIzO.jpg">
+<meta property="og:image" content="https://i36.me/i/YVpAy91vFkIbUZa.jpg">
+<meta property="og:image" content="https://i36.me/i/qysrSGUQBAelvnD.jpg">
+<meta property="og:image" content="https://i36.me/i/QzmHnwFD9laGyRt.jpg">
+<meta property="og:image" content="https://i36.me/i/vaGcU7FqixkO3s6.jpg">
+<meta property="og:image" content="https://i36.me/i/bOELgn18u5laCmq.jpg">
+<meta property="og:updated_time" content="2015-12-20T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="快速开发美观的HTML报表">
+<meta name="twitter:description" content="在项目实施的过程当中，功能顾问与客户沟通需求出好需求文档，技术顾问按需求文档开发报表。有一些非严格性要求的报表客户可能只是拿来看看，对对帐对对数据，这类报表不需要输出成为PDF格式，只需要输出到HTML或者Excel当中进行查看，但同时客户又提供了一个美观可展示的模板，功能顾问往往在Excel当中做好这个模板然后提供在需求开发文档中，例如下图">
+<meta name="twitter:image" content="https://i36.me/i/meP7GEgIAihkZT3.jpg">
+
+
+
+
+
+<link rel="icon" href="/images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-24320647-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-24320647-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="快速开发美观的HTML报表" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/i36lib">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    <!-- 
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/i/meP7GEgIAihkZT3.jpg" alt="快速开发美观的HTML报表">
+        </span>
+    </div>
+     -->
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                快速开发美观的HTML报表
+            
+        </h1>
+        
+            <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
+            <div class="level-left">
+                <i class="fas fa-calendar">&nbsp</i>
+                <time class="level-item has-text-grey" datetime="2015-12-20T16:00:00.000Z">2015-12-21</time>
+                
+                
+                <i class="fas fa-book">&nbsp</i>
+                <span class="level-item has-text-grey">
+                    
+                    
+                    10 分钟 读完 (大约 1511 个字)
+                </span>
+                
+            </div>
+        </div>
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                
+                    <i class="fas fa-folder-open">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </div>
+                
+                
+                    <i class="fas fa-tags">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/tags/EBS/">EBS</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/Oracle/">Oracle</a>
+                    </div>
+                
+            </div>
+        </div>
+        
+        <div class="content">
+             
+            <p>在项目实施的过程当中，功能顾问与客户沟通需求出好需求文档，技术顾问按需求文档开发报表。有一些非严格性要求的报表客户可能只是拿来看看，对对帐对对数据，这类报表不需要输出成为PDF格式，只需要输出到HTML或者Excel当中进行查看，但同时客户又提供了一个美观可展示的模板，功能顾问往往在Excel当中做好这个模板然后提供在需求开发文档中，例如下图<a id="more"></a>：<br><img src="/i/meP7GEgIAihkZT3.jpg"></p>
+<h2 id="输出HTML报表"><a href="#输出HTML报表" class="headerlink" title="输出HTML报表"></a>输出HTML报表</h2><p>如何让它输出到Excel之后还保持原样的美观呢？我们可以通过输出成HTML报表，这样既可以在浏览器中查看，也可以在Excel中查看，关键是用Excel打开这个HTML之后还能保持像原模板一样的美观，而不是四四方方的行列Table结构。快速开发的方法自然不是一行一行编写HTML代码和CSS样式(不少同事这么干，同寝室的哥们儿就是这么干的，然后开发这样一个报表他需要三天，其中一天用来写这个模板)。下面讲述一种我在项目中总结的快速开发这类HTML报表的方法，能极大地提高开发效率，让我们将主要精力和时间集中在报表的取数逻辑SQL的编写上面。</p>
+<h3 id="第一步：制作Html模板"><a href="#第一步：制作Html模板" class="headerlink" title="第一步：制作Html模板"></a>第一步：制作Html模板</h3><p>依据功能顾问给出的需求文档样例，先制作一个Html模板。多数功能顾问都会将模板的源文件(Excel)给你，或者是直接给你，或者是加载到Word需求文档里面。比较坑爹的功能顾问会搞个截图，告诉你做成这个样子，那么你最好去跟他拿到这个他制作的Excel源文档，以便你能直接拷贝。</p>
+<p>首先要处理Excel里面的模板格式，例如该合并单元格的合并单元格，该居中的居中，可以在结果中循环输出结果的则删除其他多余部分，只留下一个Minimum的样例即可，即让你的模板最后变成所见即所得，然后剔除多余部分。这些操作全部在Excel当中完成。之后选中你的模板部分内容，在Excel当中选择** 文件 <strong>/</strong> 另存为 **HTML文件，注意在出现的选项当中选择保存你选中的部分即可，不需要保存整个Sheet页面，然后得到一个初步的HTML文件。</p>
+<p>由于是从Excel当中另存生成的HTML页面，所以会有很多冗余代码数据，需要将这部分不影响模板显示的数据删除。凡是不影响HTML模板显示样式的代码都进行删除，然后将HTML代码里面的所有英文单引号替换成英文双引号，并确保HTML头为（不然可能浏览器解析有问题）：</p>
+<figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span> <span class="hljs-meta-keyword">PUBLIC</span> <span class="hljs-meta-string">"-//W3C//DTD XHTML 1.0 Transitional//EN"</span> <span class="hljs-meta-string">"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/1999/xhtml"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作在文本编辑器(例如Sublime Text)当中完成。制作好的HTML模板如下：<br><img src="/i/xiAY3MjeclbEIzO.jpg"></p>
+<h3 id="第二步：生成输出HTML的代码"><a href="#第二步：生成输出HTML的代码" class="headerlink" title="第二步：生成输出HTML的代码"></a>第二步：生成输出HTML的代码</h3><p>Oracle Erp里面有两张表，All_Source和Dba_Source，这两个表就是存储了你编译到系统里面的源代码，于是就可以将HTML代码粘贴到一个程序包Package（<a href="/down/code/oracle/Chx_Html_Buffer.pck">Chx_Html_Buffer.pck</a>）里面，然后将这个Package编译到系统里面，这样我们就能够根据程序包名来将HTML代码查询出来，然后LOOP一下就可以将他们输出出来了，这部分可以写成一个小程序来完成这个输出工作（<a href="/down/code/oracle/Chx_Wdb_Utl.pck">Chx_Wdb_Utl.pck</a>）。再然后便可以将输出的代码Copy到我们要开发的报表里面，OK，输出模板的代码你就不用愁了，接下来你就可以专注于写你的业务逻辑PLSQL，然后看看哪一个输出在哪一格显示，稍微修改点儿代码就OK了。</p>
+<p>将HTML代码放入Package中进行编译：<br><img src="/i/YVpAy91vFkIbUZa.jpg"><br><img src="/i/qysrSGUQBAelvnD.jpg"></p>
+<p>编写并编译程序脚本，实现从Dba_Source中读取刚才编译进去的HTML代码，以便输出生成HTML模板的PL/SQL代码。通过右键选择Test运行该程序：<br><img src="/i/QzmHnwFD9laGyRt.jpg"></p>
+<p>填写参数，第一个为存储HTML代码的程序包的名称，第二个为该程序包里面HTML代码在程序包主体中开始的行数，第三个为倒数结束的行数，最后一个为即将在报表程序中使用的输出文本的过程名（即用来封装Fnd_File.Put_Line()函数的存储过程，此处为Out_Msg）：<br><img src="/i/vaGcU7FqixkO3s6.jpg"></p>
+<p>运行输出的代码如下，直接将这部分代码复制粘贴到报表程序当中，就实现了输出HTML脚本生成跟需求所要求一样的美观的模板了，而后只需要将注意力集中于业务逻辑的实现即可。最后在定义并发程序的时候将输出类型选择为Html：<br><img src="/i/bOELgn18u5laCmq.jpg"></p>
+<h2 id="步骤简单总结"><a href="#步骤简单总结" class="headerlink" title="步骤简单总结"></a>步骤简单总结</h2><p>即写代码生成代码</p>
+<ol>
+<li>从需求文档(Excel模板)整理好HTML模板</li>
+<li>编写PL/SQL脚本将HTML模板代码生成输出</li>
+<li>将输出的代码拷贝到报表程序当中进行调整</li>
+</ol>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/EBS/">EBS</a>, <a class="has-link-grey -link" href="/tags/Oracle/">Oracle</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+            <p style="padding-bottom: 1rem">
+            <span id="busuanzi_container_page_pv">
+               本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+            </span>
+            </p>
+        
+        
+            <div class="social-share"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css">
+<script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script>
+            <!-- <div class="share-component" data-disabled="google, twitter, facebook, tencent, douban, linkedin"></div> -->
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wxpay.jpg" alt="微信"></div>
+</a>
+
+                
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2015/12/26/674d696d60c44ee7b.html">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">基于UTL_TCP实现FTP传输文件</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2015/12/16/deaf5c5b339b47e2.html">
+                <span class="level-item">快速获取Form LOV的查询SQL</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://i36.Me/2015/12/21/254796bcaedf4dfc9.html';
+        this.page.identifier = '254796bcaedf4dfc9';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'i36me' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+
+</div>
+                 
+                    
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left is-sticky">
+    
+    
+        <div class="column-right-shadow  ">
+            
+                
+<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
+<div class="card widget" id="toc" style="overflow: auto;">
+    <div class="card-content">
+        <div class="menu" style="max-height: 500px; overflow: auto;">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a href="#输出HTML报表">
+        <span class="has-mr-6">1</span>
+        <span>输出HTML报表</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#第一步：制作Html模板">
+        <span class="has-mr-6">1.1</span>
+        <span>第一步：制作Html模板</span>
+        </a></li><li>
+        <a href="#第二步：生成输出HTML的代码">
+        <span class="has-mr-6">1.2</span>
+        <span>第二步：生成输出HTML的代码</span>
+        </a></li></ul></li><li>
+        <a href="#步骤简单总结">
+        <span class="has-mr-6">2</span>
+        <span>步骤简单总结</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
+            
+                
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-28T16:00:00.000Z">2019-03-01</time></div>
+                    <a href="/2019/03/01/b7863297bbd9f2f618.html" class="has-link-black-ter is-size-6">MySQL与Postgres的比较</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/MySQL/">MySQL</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/07/01/d6e189234c794124.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/SzQ6SyZq9pQSSBm.jpg" alt="全民夺宝重构细节：幸运码的生成">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
+                    <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/01/12/7ee4c380575e4507a.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/5IjsBmMdWfvpNSG.png" alt="使用Nginx/uWSGI部署Django项目">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-01-11T16:00:00.000Z">2016-01-12</time></div>
+                    <a href="/2016/01/12/7ee4c380575e4507a.html" class="has-link-black-ter is-size-6">使用Nginx/uWSGI部署Django项目</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/26/674d696d60c44ee7b.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/TdWDkbOpXxMQBtf.jpg" alt="基于UTL_TCP实现FTP传输文件">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-25T16:00:00.000Z">2015-12-26</time></div>
+                    <a href="/2015/12/26/674d696d60c44ee7b.html" class="has-link-black-ter is-size-6">基于UTL_TCP实现FTP传输文件</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/21/254796bcaedf4dfc9.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/meP7GEgIAihkZT3.jpg" alt="快速开发美观的HTML报表">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-20T16:00:00.000Z">2015-12-21</time></div>
+                    <a href="/2015/12/21/254796bcaedf4dfc9.html" class="has-link-black-ter is-size-6">快速开发美观的HTML报表</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+            
+                <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">7</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+            
+                <!-- <div class="card widget">
+    
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C++</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Django/">
+                        <span class="level-start">
+                            <span class="level-item">Django</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/EBS/">
+                        <span class="level-start">
+                            <span class="level-item">EBS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">6</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/FTP/">
+                        <span class="level-start">
+                            <span class="level-item">FTP</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GNome/">
+                        <span class="level-start">
+                            <span class="level-item">GNome</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Hexo/">
+                        <span class="level-start">
+                            <span class="level-item">Hexo</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Java/">
+                        <span class="level-start">
+                            <span class="level-item">Java</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/MySQL/">
+                        <span class="level-start">
+                            <span class="level-item">MySQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Oracle/">
+                        <span class="level-start">
+                            <span class="level-item">Oracle</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/PLSQL/">
+                        <span class="level-start">
+                            <span class="level-item">PLSQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Postgres/">
+                        <span class="level-start">
+                            <span class="level-item">Postgres</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RSA/">
+                        <span class="level-start">
+                            <span class="level-item">RSA</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSH/">
+                        <span class="level-start">
+                            <span class="level-item">SSH</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSL/">
+                        <span class="level-start">
+                            <span class="level-item">SSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">Ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/全民夺宝/">
+                        <span class="level-start">
+                            <span class="level-item">全民夺宝</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存/">
+                        <span class="level-start">
+                            <span class="level-item">内存</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存对齐/">
+                        <span class="level-start">
+                            <span class="level-item">内存对齐</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/博客/">
+                        <span class="level-start">
+                            <span class="level-item">博客</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/数据库/">
+                        <span class="level-start">
+                            <span class="level-item">数据库</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/源/">
+                        <span class="level-start">
+                            <span class="level-item">源</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/生活/">
+                        <span class="level-start">
+                            <span class="level-item">生活</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/白云山/">
+                        <span class="level-start">
+                            <span class="level-item">白云山</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/随机/">
+                        <span class="level-start">
+                            <span class="level-item">随机</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/集群/">
+                        <span class="level-start">
+                            <span class="level-item">集群</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div> -->
+            
+        </div>
+    
+</div>
+
+
+                
+            </div>
+        </div>
+    </section>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="快速开发美观的HTML报表" height="28">
+                
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                    </span>
+                    <span id="busuanzi_container_site_uv">
+                      &nbsp;&nbsp;&nbsp;本站访客数<span id="busuanzi_value_site_uv"></span>人次
+                    </span>
+                    <span id="timeDate" class="is-size-7">&nbsp;&nbsp;&nbsp;载入天数...</span>
+                    <span id="times" class="is-size-7">&nbsp;&nbsp;&nbsp;载入时分秒...</span>
+                </p>
+                <p class="is-size-7">
+                &copy; 2020 阿北&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+                <script>
+                    var now = new Date(); 
+                    function createtime() { 
+                        var grt = new Date("10/01/2015 16:49:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime()+250); 
+                        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp;&nbsp;"+"本站已安全运行 "+dnum+" 天 "; 
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+                    } 
+                setInterval("createtime()",250);
+                </script>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</body>
+</html>

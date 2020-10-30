@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+<title>使用Nginx/uWSGI部署Django项目 - 阿北</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="description" content="在做一个OvpnSpider的iOS客户端程序，该程序依托于日本筑波大学的VPN中继服务项目提供的API。VPNGate是一个分布式的VPN服务器实验项目，它本身并不提供VPN服务器，而是由全球各地自愿者将自己的电脑自愿提供出来充当VPN服务器。">
+<meta name="keywords" content="Python,Django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Nginx&#x2F;uWSGI部署Django项目">
+<meta property="og:url" content="https://i36.Me/2016/01/12/7ee4c380575e4507a.html">
+<meta property="og:site_name" content="阿北">
+<meta property="og:description" content="在做一个OvpnSpider的iOS客户端程序，该程序依托于日本筑波大学的VPN中继服务项目提供的API。VPNGate是一个分布式的VPN服务器实验项目，它本身并不提供VPN服务器，而是由全球各地自愿者将自己的电脑自愿提供出来充当VPN服务器。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2016-01-11T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Nginx&#x2F;uWSGI部署Django项目">
+<meta name="twitter:description" content="在做一个OvpnSpider的iOS客户端程序，该程序依托于日本筑波大学的VPN中继服务项目提供的API。VPNGate是一个分布式的VPN服务器实验项目，它本身并不提供VPN服务器，而是由全球各地自愿者将自己的电脑自愿提供出来充当VPN服务器。">
+
+
+
+
+
+<link rel="icon" href="/images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-24320647-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-24320647-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="使用Nginx/uWSGI部署Django项目" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/i36lib">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    <!-- 
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/i/5IjsBmMdWfvpNSG.png" alt="使用Nginx/uWSGI部署Django项目">
+        </span>
+    </div>
+     -->
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                使用Nginx/uWSGI部署Django项目
+            
+        </h1>
+        
+            <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
+            <div class="level-left">
+                <i class="fas fa-calendar">&nbsp</i>
+                <time class="level-item has-text-grey" datetime="2016-01-11T16:00:00.000Z">2016-01-12</time>
+                
+                
+                <i class="fas fa-book">&nbsp</i>
+                <span class="level-item has-text-grey">
+                    
+                    
+                    14 分钟 读完 (大约 2162 个字)
+                </span>
+                
+            </div>
+        </div>
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                
+                    <i class="fas fa-folder-open">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/Python/">Python</a>
+                    </div>
+                
+                
+                    <i class="fas fa-tags">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/tags/Django/">Django</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/Python/">Python</a>
+                    </div>
+                
+            </div>
+        </div>
+        
+        <div class="content">
+             
+            <p>在做一个OvpnSpider的iOS客户端程序，该程序依托于日本筑波大学的VPN中继服务项目提供的API。VPNGate是一个分布式的VPN服务器实验项目，它本身并不提供VPN服务器，而是由全球各地自愿者将自己的电脑自愿提供出来充当VPN服务器。<a id="more"></a>我要做的OvpnSpider就是依托VPNGate提供的API获取一个连接这些分布式VPN服务器的OpenVPN配置文件列表，将这些列表经过测试筛选排序然后供OvpnSpider的iOS客户端使用。</p>
+<p>为了快速开发，服务器端采用 Nginx + uWSGI + Python(Django)来搭建，这里记录下环境搭建的过程。开发环境：Mac Pro。</p>
+<h2 id="安装配置-Nginx"><a href="#安装配置-Nginx" class="headerlink" title="安装配置 Nginx"></a>安装配置 Nginx</h2><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>官方 <a href="http://nginx.org/download/nginx-1.9.5.tar.gz" target="_blank" rel="noopener">Nginx-1.9.5</a> 版本。安装文档：<a href="https://www.nginx.com/resources/admin-guide/installing-nginx-open-source/" target="_blank" rel="noopener">Installation Doc</a></p>
+<h3 id="附加模块"><a href="#附加模块" class="headerlink" title="附加模块"></a>附加模块</h3><p>因为iOS现在全部要求与服务器端的链接采用https，所以在搭建Nginx的时候要开启对SSL的支持。根据上面安装文档的提示，下载<a href="ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.37.tar.gz" target="_blank" rel="noopener">Pcre-8.37</a>、<a href="ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.37.tar.gz" target="_blank" rel="noopener">Zlib-1.2.8</a>以及<a href="http://www.openssl.org/source/openssl-1.0.2d.tar.gz" target="_blank" rel="noopener">OpenSSL-1.0.2d</a>。对于Pcre和Zlib采用<em>三步曲</em>安装即可，我采用默认安装路径(/usr/local)：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./configure</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> make</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo make install</span></span><br></pre></td></tr></table></figure>
+
+<p>对于OpenSSL需要指定64位编译：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./config darwin64-x86_64-cc</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> make</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo make install</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就可以进行下一步，即编译安装Nginx。</p>
+<h3 id="编译安装Nginx"><a href="#编译安装Nginx" class="headerlink" title="编译安装Nginx"></a>编译安装Nginx</h3><p>将nginx-1.9.5.tar.gz、openssl-1.0.2d.tar.gz、pcre-8.37.tar.gz和zlib-1.2.8.tar.gz放入同一个目录下，然后全部在当前目录解压。进入nginx-1.9.5目录，使用命令来配置：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./configure --sbin-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx --conf-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx.conf --pid-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx.pid --with-http_ssl_module --with-pcre=../pcre-8.37 --with-zlib=../zlib-1.2.8</span></span><br></pre></td></tr></table></figure>
+
+<p>在这里遇到不少问题，首先是开启SSL需要编译时指定<code>--with-http_ssl_module</code>，但是即便前面已经编译安装了OpenSSL，它也依旧提示找不到OpenSSL：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./configure: error: SSL modules require the OpenSSL library.</span></span><br><span class="line">You can either do not enable the modules, or install the OpenSSL library</span><br><span class="line">into the system, or build the OpenSSL library statically from the source</span><br><span class="line">with nginx by using --with-openssl=&lt;path&gt; option.</span><br></pre></td></tr></table></figure>
+
+<p>没办法，只能像zlib一样指定OpenSSL，使用命令：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./configure --sbin-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx --conf-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx.conf --pid-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx.pid --with-http_ssl_module --with-openssl=../openssl-1.0.2d --with-pcre=../pcre-8.37 --with-zlib=../zlib-1.2.8</span></span><br></pre></td></tr></table></figure>
+
+<p>好了，<code>./configure</code>没有出现警告，继续<code>make</code>，然后中途出现一个警告，是在configure OpenSSL的时候出现的：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WARNING! If you wish to build 64-bit library, then you have to invoke './Configure darwin64-x86_64-cc' manually. You have about 5 seconds to press Ctrl-C to abort.</span><br></pre></td></tr></table></figure>
+
+<p>这是由于我的系统是64位的。如果忽略警告继续，最后将出现错误：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ld: symbol(s) not found for architecture x86_64</span><br><span class="line">clang: error: linker command failed with exit code 1 (use -v to see invocation)</span><br><span class="line">make[1]: * [objs/nginx] Error 1</span><br><span class="line">make: * [build] Error 2</span><br></pre></td></tr></table></figure>
+
+<p>没办法，只能想办法让它以<code>darwin64-x86_64-cc</code>替代<code>darwin-i386-cc</code>来编译OpenSSL，怎么办？到openssl-1.0.2d下修改<code>config</code>文件，打开该文件，通过查找发现上面的警告消息出现在557行：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//这一行是554行</span><br><span class="line">ISA64=`(sysctl -n hw.optional.x86_64) 2&gt;/dev/null`</span><br><span class="line">if [ "$ISA64" = "1" -a -z "$KERNEL_BITS" ]; then</span><br><span class="line">    echo "WARNING! If you wish to build 64-bit library, then you have to"</span><br><span class="line">    echo "         invoke './Configure darwin64-x86_64-cc' *manually*."</span><br><span class="line">    if [ "$TEST" = "false" -a -t 1 ]; then</span><br><span class="line">      echo "         You have about 5 seconds to press Ctrl-C to abort."</span><br><span class="line">      (trap "stty `stty -g`" 2 0; stty -icanon min 0 time 50; read waste) &lt;&amp;1</span><br><span class="line">    fi</span><br><span class="line">fi</span><br><span class="line">if [ "$ISA64" = "1" -a "$KERNEL_BITS" = "64" ]; then</span><br><span class="line">    OUT="darwin64-x86_64-cc"</span><br><span class="line">else</span><br><span class="line">    OUT="darwin-i386-cc"</span><br><span class="line">fi ;;</span><br></pre></td></tr></table></figure>
+
+<p>继续往下10行就能发现我们可以将<code>OUT=&quot;darwin-i386-cc&quot;</code>换为<code>OUT=&quot;darwin64-x86_64-cc&quot;</code>，这样就可以忽略警告，又能默认以<code>darwin64-x86_64-cc</code>进行编译了。好，就这么干，改完之后再次运行：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./configure --sbin-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx --conf-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx.conf --pid-path=/usr/<span class="hljs-built_in">local</span>/nginx/nginx.pid --with-http_ssl_module --with-openssl=../openssl-1.0.2d --with-pcre=../pcre-8.37 --with-zlib=../zlib-1.2.8</span></span><br></pre></td></tr></table></figure>
+
+<p>没问题，继续<code>make</code>，忽略警告让它继续，然后发现出现了错误：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ../openssl-1.0.2d \</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> &amp;&amp; <span class="hljs-keyword">if</span> [ -f Makefile ]; <span class="hljs-keyword">then</span> /Applications/Xcode.app/Contents/Developer/usr/bin/make clean; <span class="hljs-keyword">fi</span> \</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> &amp;&amp; ./config --prefix=/Users/Fury/Downloads/nginx-1.9.5/../openssl-1.0.2d/.openssl no-shared  \</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> &amp;&amp; /Applications/Xcode.app/Contents/Developer/usr/bin/make \</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> &amp;&amp; /Applications/Xcode.app/Contents/Developer/usr/bin/make install LIBDIR=lib</span></span><br><span class="line">Makefile is older than Makefile.org, Configure or config.</span><br><span class="line">Reconfigure the source tree (via './config' or 'perl Configure'), please.</span><br><span class="line">make[2]: * [Makefile] Error 1</span><br><span class="line">make[1]: * [../openssl-1.0.2d/.openssl/include/openssl/ssl.h] Error 2</span><br><span class="line">make: *** [build] Error 2</span><br></pre></td></tr></table></figure>
+
+<p>很明显是因为我改动了config文件，导致Makefile与它原有的不一致了，怎么办呢？嗯，进入openssl-1.0.2d目录来手动执行一下<code>./config</code>来生成Makefile：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ../openssl-1.0.2d</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./config</span></span><br></pre></td></tr></table></figure>
+
+<p>好了，回到nginx-1.9.5目录继续执行make：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ../nginx-1.9.5</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> make</span></span><br></pre></td></tr></table></figure>
+
+<p>这次正确无误，执行install来安装即可：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo make install</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="测试Nginx服务器"><a href="#测试Nginx服务器" class="headerlink" title="测试Nginx服务器"></a>测试Nginx服务器</h3><p>启动Nginx，下面列出的是几个常用操作：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo nginx   <span class="hljs-comment"># 启动</span></span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo nginx -s reload   <span class="hljs-comment"># 重新加载配置文件</span></span></span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash"> 关闭的话直接 ps aux|grep nginx 来 <span class="hljs-built_in">kill</span> 掉进程即可</span></span><br></pre></td></tr></table></figure>
+
+<p>然后打开localhost能看到页面内容如下则说明安装成功：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Welcome to nginx!</span><br><span class="line">If you see this page, the nginx web server is successfully installed and working. Further configuration is required.</span><br><span class="line">For online documentation and support please refer to nginx.org.</span><br><span class="line">Commercial support is available at nginx.com.</span><br><span class="line">Thank you for using nginx.</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置Nginx"><a href="#配置Nginx" class="headerlink" title="配置Nginx"></a>配置Nginx</h3><p>此处和第6节已搬到文章<a href="/Linux/5ffb348b1e9344848fefa1f095a0d9cf.html">基于openssl颁发自签名SSL证书</a>中。</p>
+<h3 id="生成证书"><a href="#生成证书" class="headerlink" title="生成证书"></a>生成证书</h3><p>这一节参考了文档<a href="http://www.linuxidc.com/Linux/2013-08/88271.htm" target="_blank" rel="noopener">Nginx配置SSL证书部署HTTPS网站</a></p>
+<h2 id="安装uWSGI服务器"><a href="#安装uWSGI服务器" class="headerlink" title="安装uWSGI服务器"></a>安装uWSGI服务器</h2><p>uWSGI的官方文档地址在<a href="https://uwsgi-docs.readthedocs.org/en/latest/" target="_blank" rel="noopener">这里</a>，在Nginx下配置uWSGI来部署Django的文档在<a href="https://uwsgi-docs.readthedocs.org/en/latest/tutorials/Django_and_nginx.html" target="_blank" rel="noopener">这里</a>，我没有从源码编译安装，而是使用pip安装的：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo -H pip install uwsgi</span><br></pre></td></tr></table></figure>
+
+<p>在Django项目的根路径下新建一个web.ini配置文件，用它来支持uWSGI的启动：</p>
+<figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-section">[uwsgi]</span></span><br><span class="line"><span class="hljs-attr">chdir</span>=/Users/Fury/sharework/MyGitRepos/AutoVPN/Server/fvpnd</span><br><span class="line"><span class="hljs-attr">module</span>=fvpnd.wsgi:application</span><br><span class="line"><span class="hljs-attr">master</span>=<span class="hljs-literal">True</span></span><br><span class="line"><span class="hljs-attr">vacuum</span>=<span class="hljs-literal">True</span></span><br><span class="line"><span class="hljs-attr">socket</span>=<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">53020</span></span><br><span class="line"><span class="hljs-attr">pidfile</span>=/tmp/fvpnd-master.pid</span><br><span class="line"><span class="hljs-attr">daemonize</span>=/tmp/fvpnd-uwsgi.log</span><br></pre></td></tr></table></figure>
+
+<p>然后可以通过下面的命令来使用uWSGI运行这个Django项目：</p>
+<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ pwd</span><br><span class="line">$ /Users/Fury/sharework/MyGitRepos/AutoVPN/Server/fvpnd</span><br><span class="line">$ uwsgi --ini web.ini</span><br><span class="line">[uWSGI] getting INI configuration from web.ini</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用Django创建项目"><a href="#使用Django创建项目" class="headerlink" title="使用Django创建项目"></a>使用Django创建项目</h2><p>Django是一个Python框架，简单强大易使用。可到 <a href="https://www.djangoproject.com/download/" target="_blank" rel="noopener">Django</a> 官网下载安装稳定版。我这里使用了 pip 进行安装：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo -H pip install django</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 Django 创建项目：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> django-admin startproject fvpnd</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 Django 创建APP：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> python manage.py startapp api</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="对-APP-进行配置"><a href="#对-APP-进行配置" class="headerlink" title="对 APP 进行配置"></a>对 APP 进行配置</h3><p>修改 fvpnd/settings.py，加入新建的APP：</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">INSTALLED_APPS = (</span><br><span class="line"><span class="hljs-comment">#    'django.contrib.admin',</span></span><br><span class="line">    <span class="hljs-string">'django.contrib.auth'</span>,</span><br><span class="line">    <span class="hljs-string">'django.contrib.contenttypes'</span>,</span><br><span class="line">    <span class="hljs-string">'django.contrib.sessions'</span>,</span><br><span class="line">    <span class="hljs-string">'django.contrib.messages'</span>,</span><br><span class="line">    <span class="hljs-string">'django.contrib.staticfiles'</span>,</span><br><span class="line">    <span class="hljs-string">'api'</span>,</span><br><span class="line">)</span><br><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="hljs-string">'default'</span>: &#123;</span><br><span class="line">        <span class="hljs-string">'ENGINE'</span>: <span class="hljs-string">'django.db.backends.mysql'</span>,</span><br><span class="line">        <span class="hljs-string">'NAME'</span>: <span class="hljs-string">'fvpndb'</span>,</span><br><span class="line">        <span class="hljs-comment">#'USER': 'fvpnapp',</span></span><br><span class="line">        <span class="hljs-comment">#'PASSWORD': '123456',</span></span><br><span class="line">        <span class="hljs-string">'USER'</span>: <span class="hljs-string">'fvpndba'</span>,</span><br><span class="line">        <span class="hljs-string">'PASSWORD'</span>: <span class="hljs-string">'123456'</span>,</span><br><span class="line">        <span class="hljs-string">'HOST'</span>: <span class="hljs-string">'127.0.0.1'</span>,</span><br><span class="line">        <span class="hljs-string">'PORT'</span>: <span class="hljs-string">'3306'</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改 fvpnd/urls.py：将原内容替换（删除了admin，加入APP）</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">from</span> api <span class="hljs-keyword">import</span> urls <span class="hljs-keyword">as</span> api_urls</span><br><span class="line"><span class="hljs-keyword">from</span> django.conf.urls <span class="hljs-keyword">import</span> include, url</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">	url(<span class="hljs-string">r'^api/'</span>, include(api_urls)),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>在 api/ 下新建urls.py：</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">from</span> api <span class="hljs-keyword">import</span> views</span><br><span class="line"><span class="hljs-keyword">from</span> django.conf.urls <span class="hljs-keyword">import</span> include, url</span><br><span class="line"></span><br><span class="line">urlpatterns = [</span><br><span class="line">    url(<span class="hljs-string">r'^$'</span>, views.api),</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<p>修改 api/views.py的内容为：</p>
+<figure class="highlight python hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#coding:utf-8</span></span><br><span class="line"><span class="hljs-keyword">from</span> django.shortcuts <span class="hljs-keyword">import</span> render</span><br><span class="line"><span class="hljs-keyword">from</span> django.http <span class="hljs-keyword">import</span> HttpResponse</span><br><span class="line"> </span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">api</span><span class="hljs-params">(request)</span>:</span></span><br><span class="line">    <span class="hljs-keyword">return</span> HttpResponse(<span class="hljs-string">u"Just a test!"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这样通过访问<a href="#">https://localhost/api/</a>就可以定位到这个api函数，将其作为入口。</p>
+<h3 id="使用内置服务器测试"><a href="#使用内置服务器测试" class="headerlink" title="使用内置服务器测试"></a>使用内置服务器测试</h3><p>Django 内置了一个轻量级的http服务器，通过命令来运行(migrate是与数据库相关的，第一次时运行即可)：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> python manage.py migrate</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> python manage.py runserver</span></span><br></pre></td></tr></table></figure>
+
+<p>默认将启动在 <a href="http://127.0.0.1:8000/" target="_blank" rel="noopener">http://127.0.0.1:8000</a> 。由于修改了默认的数据库，使用了MySQL,可能会报错提示找不到 MySQLdb，需要先安装两个组件：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> brew install mysql-connector-c</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo -H pip install mysql-pyth</span></span><br></pre></td></tr></table></figure>
+
+<p>Django会对数据库进行测试（通过创建表的方式），所以数据库用户需要有创建权限（后面再改回去就好）。</p>
+<h3 id="部署-Django-项目："><a href="#部署-Django-项目：" class="headerlink" title="部署 Django 项目："></a>部署 Django 项目：</h3><p>关闭项目的settings.py下的debug选项，在项目目录下（与manage.py同一个目录，fvpnd/）创建web.ini配置文件（与上面uWSGI部分的是一样的），内容为：</p>
+<figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-section">[uwsgi]</span></span><br><span class="line"><span class="hljs-attr">chdir</span>=/Users/Fury/sharework/MyGitRepos/AutoVPN/Server/fvpnd</span><br><span class="line"><span class="hljs-attr">module</span>=fvpnd.wsgi:application</span><br><span class="line"><span class="hljs-attr">master</span>=<span class="hljs-literal">True</span></span><br><span class="line"><span class="hljs-attr">vacuum</span>=<span class="hljs-literal">True</span></span><br><span class="line"><span class="hljs-attr">socket</span>=<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">53020</span></span><br><span class="line"><span class="hljs-attr">pidfile</span>=/tmp/fvpnd-master.pid</span><br><span class="line"><span class="hljs-attr">daemonize</span>=/tmp/fvpnd-uwsgi.log</span><br></pre></td></tr></table></figure>
+
+<p>使用命令启动项目：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> uwsgi --ini web.ini</span></span><br></pre></td></tr></table></figure>
+
+<p>具体配置可有<a href="https://uwsgi-docs.readthedocs.org/en/latest/tutorials/Django_and_nginx.html" target="_blank" rel="noopener">官方文档</a>参考。</p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Django/">Django</a>, <a class="has-link-grey -link" href="/tags/Python/">Python</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+            <p style="padding-bottom: 1rem">
+            <span id="busuanzi_container_page_pv">
+               本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+            </span>
+            </p>
+        
+        
+            <div class="social-share"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css">
+<script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script>
+            <!-- <div class="share-component" data-disabled="google, twitter, facebook, tencent, douban, linkedin"></div> -->
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wxpay.jpg" alt="微信"></div>
+</a>
+
+                
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2016/07/01/d6e189234c794124.html">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">全民夺宝重构细节：幸运码的生成</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2015/12/26/674d696d60c44ee7b.html">
+                <span class="level-item">基于UTL_TCP实现FTP传输文件</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://i36.Me/2016/01/12/7ee4c380575e4507a.html';
+        this.page.identifier = '7ee4c380575e4507a';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'i36me' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+
+</div>
+                 
+                    
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left is-sticky">
+    
+    
+        <div class="column-right-shadow  ">
+            
+                
+<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
+<div class="card widget" id="toc" style="overflow: auto;">
+    <div class="card-content">
+        <div class="menu" style="max-height: 500px; overflow: auto;">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a href="#安装配置-Nginx">
+        <span class="has-mr-6">1</span>
+        <span>安装配置 Nginx</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#下载">
+        <span class="has-mr-6">1.1</span>
+        <span>下载</span>
+        </a></li><li>
+        <a href="#附加模块">
+        <span class="has-mr-6">1.2</span>
+        <span>附加模块</span>
+        </a></li><li>
+        <a href="#编译安装Nginx">
+        <span class="has-mr-6">1.3</span>
+        <span>编译安装Nginx</span>
+        </a></li><li>
+        <a href="#测试Nginx服务器">
+        <span class="has-mr-6">1.4</span>
+        <span>测试Nginx服务器</span>
+        </a></li><li>
+        <a href="#配置Nginx">
+        <span class="has-mr-6">1.5</span>
+        <span>配置Nginx</span>
+        </a></li><li>
+        <a href="#生成证书">
+        <span class="has-mr-6">1.6</span>
+        <span>生成证书</span>
+        </a></li></ul></li><li>
+        <a href="#安装uWSGI服务器">
+        <span class="has-mr-6">2</span>
+        <span>安装uWSGI服务器</span>
+        </a></li><li>
+        <a href="#使用Django创建项目">
+        <span class="has-mr-6">3</span>
+        <span>使用Django创建项目</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#对-APP-进行配置">
+        <span class="has-mr-6">3.1</span>
+        <span>对 APP 进行配置</span>
+        </a></li><li>
+        <a href="#使用内置服务器测试">
+        <span class="has-mr-6">3.2</span>
+        <span>使用内置服务器测试</span>
+        </a></li><li>
+        <a href="#部署-Django-项目：">
+        <span class="has-mr-6">3.3</span>
+        <span>部署 Django 项目：</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+            
+                
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-28T16:00:00.000Z">2019-03-01</time></div>
+                    <a href="/2019/03/01/b7863297bbd9f2f618.html" class="has-link-black-ter is-size-6">MySQL与Postgres的比较</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/MySQL/">MySQL</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/07/01/d6e189234c794124.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/SzQ6SyZq9pQSSBm.jpg" alt="全民夺宝重构细节：幸运码的生成">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
+                    <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/01/12/7ee4c380575e4507a.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/5IjsBmMdWfvpNSG.png" alt="使用Nginx/uWSGI部署Django项目">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-01-11T16:00:00.000Z">2016-01-12</time></div>
+                    <a href="/2016/01/12/7ee4c380575e4507a.html" class="has-link-black-ter is-size-6">使用Nginx/uWSGI部署Django项目</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/26/674d696d60c44ee7b.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/TdWDkbOpXxMQBtf.jpg" alt="基于UTL_TCP实现FTP传输文件">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-25T16:00:00.000Z">2015-12-26</time></div>
+                    <a href="/2015/12/26/674d696d60c44ee7b.html" class="has-link-black-ter is-size-6">基于UTL_TCP实现FTP传输文件</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2015/12/21/254796bcaedf4dfc9.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/meP7GEgIAihkZT3.jpg" alt="快速开发美观的HTML报表">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2015-12-20T16:00:00.000Z">2015-12-21</time></div>
+                    <a href="/2015/12/21/254796bcaedf4dfc9.html" class="has-link-black-ter is-size-6">快速开发美观的HTML报表</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Oracle/">Oracle</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+            
+                <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">7</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+            
+                <!-- <div class="card widget">
+    
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C++</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Django/">
+                        <span class="level-start">
+                            <span class="level-item">Django</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/EBS/">
+                        <span class="level-start">
+                            <span class="level-item">EBS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">6</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/FTP/">
+                        <span class="level-start">
+                            <span class="level-item">FTP</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GNome/">
+                        <span class="level-start">
+                            <span class="level-item">GNome</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Hexo/">
+                        <span class="level-start">
+                            <span class="level-item">Hexo</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Java/">
+                        <span class="level-start">
+                            <span class="level-item">Java</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/MySQL/">
+                        <span class="level-start">
+                            <span class="level-item">MySQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Oracle/">
+                        <span class="level-start">
+                            <span class="level-item">Oracle</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/PLSQL/">
+                        <span class="level-start">
+                            <span class="level-item">PLSQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Postgres/">
+                        <span class="level-start">
+                            <span class="level-item">Postgres</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RSA/">
+                        <span class="level-start">
+                            <span class="level-item">RSA</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSH/">
+                        <span class="level-start">
+                            <span class="level-item">SSH</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSL/">
+                        <span class="level-start">
+                            <span class="level-item">SSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">Ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/全民夺宝/">
+                        <span class="level-start">
+                            <span class="level-item">全民夺宝</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存/">
+                        <span class="level-start">
+                            <span class="level-item">内存</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存对齐/">
+                        <span class="level-start">
+                            <span class="level-item">内存对齐</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/博客/">
+                        <span class="level-start">
+                            <span class="level-item">博客</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/数据库/">
+                        <span class="level-start">
+                            <span class="level-item">数据库</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/源/">
+                        <span class="level-start">
+                            <span class="level-item">源</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/生活/">
+                        <span class="level-start">
+                            <span class="level-item">生活</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/白云山/">
+                        <span class="level-start">
+                            <span class="level-item">白云山</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/随机/">
+                        <span class="level-start">
+                            <span class="level-item">随机</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/集群/">
+                        <span class="level-start">
+                            <span class="level-item">集群</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div> -->
+            
+        </div>
+    
+</div>
+
+
+                
+            </div>
+        </div>
+    </section>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="使用Nginx/uWSGI部署Django项目" height="28">
+                
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <span id="busuanzi_container_site_pv">
+                        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                    </span>
+                    <span id="busuanzi_container_site_uv">
+                      &nbsp;&nbsp;&nbsp;本站访客数<span id="busuanzi_value_site_uv"></span>人次
+                    </span>
+                    <span id="timeDate" class="is-size-7">&nbsp;&nbsp;&nbsp;载入天数...</span>
+                    <span id="times" class="is-size-7">&nbsp;&nbsp;&nbsp;载入时分秒...</span>
+                </p>
+                <p class="is-size-7">
+                &copy; 2020 阿北&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+                <script>
+                    var now = new Date(); 
+                    function createtime() { 
+                        var grt = new Date("10/01/2015 16:49:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime()+250); 
+                        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                        document.getElementById("timeDate").innerHTML = "&nbsp;&nbsp;&nbsp;"+"本站已安全运行 "+dnum+" 天 "; 
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+                    } 
+                setInterval("createtime()",250);
+                </script>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</body>
+</html>
