@@ -191,25 +191,18 @@
              
             <p>自己生成证书可以用于构建证书颁发服务来为客户端授信，这里记录如何使用<code>openssl</code>生成证书并在Nginx中配置和使用。</p>
 <a id="more"></a>
-
 <h2 id="自签名证书"><a href="#自签名证书" class="headerlink" title="自签名证书"></a>自签名证书</h2><p>生成一个RSA私钥 ：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl genrsa -des3 -out fvpnd.key 1024</span></span><br></pre></td></tr></table></figure>
-
 <p>拷贝一个不需要输入密码的密钥文件</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl rsa -<span class="hljs-keyword">in</span> fvpnd.key -out fvpnd_nopass.key</span></span><br></pre></td></tr></table></figure>
-
 <p>生成一个证书请求</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl req -new -key fvpnd.key -out fvpnd.csr</span></span><br></pre></td></tr></table></figure>
-
 <p>签发证书，有效期365天</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl x509 -req -days 365 -<span class="hljs-keyword">in</span> fvpnd.csr -signkey fvpnd.key -out fvpnd.crt</span></span><br></pre></td></tr></table></figure>
-
 <h2 id="Nginx配置和使用"><a href="#Nginx配置和使用" class="headerlink" title="Nginx配置和使用"></a>Nginx配置和使用</h2><p>将方才生成的证书拷贝到<code>/etc/nginx/ssl/</code>；安装好Nginx之后修改<code>/usr/local/nginx</code>下的nginx.conf，注释掉<code>server</code>这一节，加入一句指令来另外指定各个站点的配置文件路径：</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#gzip  on;</span><br><span class="line">include /usr/local/nginx/conf/vhosts/*.conf;</span><br></pre></td></tr></table></figure>
-
 <p>新建 <code>/usr/local/nginx/conf/vhosts</code> 目录，新建<code>fvpnd.conf</code>文件，内容：</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># HTTPS server</span><br><span class="line">server &#123;</span><br><span class="line">    #listen      80;</span><br><span class="line">    listen       443 ssl;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    server_name  127.0.0.1;</span><br><span class="line"></span><br><span class="line">    ssl_certificate     /etc/nginx/ssl/fvpnd.crt;</span><br><span class="line">    ssl_certificate_key /etc/nginx/ssl/fvpnd_nopass.key;</span><br><span class="line">    root   /var/app/nginx/vhost/fvpnd;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        # for uWSGI</span><br><span class="line">        uwsgi_pass 127.0.0.1:53020;</span><br><span class="line">        include uwsgi_params;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h2 id="免费证书"><a href="#免费证书" class="headerlink" title="免费证书"></a>免费证书</h2><p>如<a href="http://www.startssl.com/" target="_blank" rel="noopener">StartSSL</a>，但证书有效期只有1年。</p>
 
         </div>
@@ -369,25 +362,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -417,6 +391,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -475,17 +468,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -500,6 +482,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -564,6 +557,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -648,7 +652,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -714,7 +718,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -797,17 +801,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -830,9 +823,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

@@ -231,7 +231,6 @@
 </blockquote>
 <h2 id="程序实现"><a href="#程序实现" class="headerlink" title="程序实现"></a>程序实现</h2><p><strong>LuckyNumberBuilder.java</strong></p>
 <figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> any; <span class="hljs-comment">// 避免暴露项目敏感细节，此处我替换掉</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">import</span> java.util.Random;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LuckyNumberBuilder</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> LUCKY_NUMBER_MAX = <span class="hljs-number">99999999</span>;</span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> LUCKY_NUMBER_BASE = <span class="hljs-number">10000000</span>; <span class="hljs-comment">// 1千万</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">verifyPrice</span><span class="hljs-params">(<span class="hljs-keyword">int</span> price, <span class="hljs-keyword">int</span> unit)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (unit &lt;= <span class="hljs-number">0</span> || unit &gt; price || price &gt; LUCKY_NUMBER_MAX || price%unit != <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalArgumentException(</span><br><span class="line">                <span class="hljs-string">"售价(需为夺宝价的整数倍)或夺宝价无效，售价："</span> + price + <span class="hljs-string">"，夺宝价："</span> + unit</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="hljs-comment">//该方法可以独立到公共包</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">shuffle</span><span class="hljs-params">(<span class="hljs-keyword">int</span>[] numbers)</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">if</span> (numbers.length &lt;= <span class="hljs-number">1</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Random random = <span class="hljs-keyword">new</span> Random();</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-comment">//random.nextInt(10)%2 == 0 增强随机性</span></span><br><span class="line">        <span class="hljs-keyword">if</span> (numbers.length == <span class="hljs-number">2</span> &amp;&amp; random.nextInt(<span class="hljs-number">10</span>)%<span class="hljs-number">2</span> == <span class="hljs-number">0</span>) &#123;</span><br><span class="line">            numbers[<span class="hljs-number">0</span>] ^= numbers[<span class="hljs-number">1</span>];</span><br><span class="line">            numbers[<span class="hljs-number">1</span>] ^= numbers[<span class="hljs-number">0</span>];</span><br><span class="line">            numbers[<span class="hljs-number">0</span>] ^= numbers[<span class="hljs-number">1</span>];</span><br><span class="line">            <span class="hljs-keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; numbers.length; i++) &#123;</span><br><span class="line">            <span class="hljs-comment">//随机选择一个 [0, N) 之间不为i的下标，注意溢出的情况</span></span><br><span class="line">            <span class="hljs-keyword">int</span> si = random.nextInt(numbers.length);</span><br><span class="line">            si = ((si == i) ? si + <span class="hljs-number">1</span> : si) % numbers.length;</span><br><span class="line"></span><br><span class="line">            numbers[i] ^= numbers[si];</span><br><span class="line">            numbers[si] ^= numbers[i];</span><br><span class="line">            numbers[i] ^= numbers[si];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] build(<span class="hljs-keyword">int</span> price) &#123;</span><br><span class="line">        <span class="hljs-keyword">return</span> build(price, <span class="hljs-number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">int</span>[] build(<span class="hljs-keyword">int</span> price, <span class="hljs-keyword">int</span> unit) &#123;</span><br><span class="line">        verifyPrice(price, unit);</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">int</span> luckyNumberCount = price / unit;</span><br><span class="line">        <span class="hljs-keyword">int</span>[] luckyNumbers = <span class="hljs-keyword">new</span> <span class="hljs-keyword">int</span>[luckyNumberCount];</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;luckyNumberCount; i++) &#123;</span><br><span class="line">            luckyNumbers[i] = i + <span class="hljs-number">1</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="hljs-keyword">if</span> (i+<span class="hljs-number">1</span> &lt; LUCKY_NUMBER_BASE) &#123;</span><br><span class="line">                luckyNumbers[i] += LUCKY_NUMBER_BASE;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        shuffle(luckyNumbers);</span><br><span class="line">        </span><br><span class="line">        <span class="hljs-keyword">return</span> luckyNumbers;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h2 id="效率分析"><a href="#效率分析" class="headerlink" title="效率分析"></a>效率分析</h2><p>两个<code>for</code>遍历<code>N</code>次，时间复杂度为<code>O(2N)</code>亦即<code>O(n)</code>级别，已经可以接受。</p>
 <p>显而易见的是，价格越高，生成的幸运码数量就可能越多，幸运码数量和占用空间的大小是随着价格的升高而线性增加的，所以空间的复杂度也在<code>O(n)</code>级别，而随着N越大，占用空间就越多：一个幸运码为一个数字，占用<code>4</code>个字节，考虑一下几种情况下生成幸运码的内存消耗情况：</p>
 <ol>
@@ -240,7 +239,6 @@
 </li>
 <li><p>而考虑大多数常见的商品价格情况，基本处在<code>万元</code>级别以下：</p>
  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(10*10000 / 1) * 4 / 1000 = 400 (KB)            // 10w，一般没有这个价格的商品</span><br><span class="line">(5*10000 / 1) * 4 / 1000 = 200 (KB)             // 5w，高级相机、手表等，高配苹果产品等</span><br><span class="line">(10000 / 1) * 4 / 1000 = 40 (KB)                // 1w，绝大多数商品处在这个价格级别,及低于</span><br></pre></td></tr></table></figure>
-
 </li>
 </ol>
 <p>也就是说按照这个实现方案，大多数商品的换期生成抽奖号码所消耗的CPU和内存资源都会比较平稳，资源耗用量不高，而少数情况下，豪车等顶级商品（500w级别）换期时会有一个小波峰，但处在可接受范围。</p>
@@ -320,8 +318,8 @@
         
         
         <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2016/01/12/7ee4c380575e4507a.html">
-                <span class="level-item">使用Nginx/uWSGI部署Django项目</span>
+            <a class="level level-item has-link-grey  article-nav-next" href="/2016/05/01/4e7557d65574406c.html">
+                <span class="level-item">Java8 ArrayList&lt;E&gt;源码解读</span>
                 <i class="level-item fas fa-chevron-right"></i>
             </a>
         </div>
@@ -410,25 +408,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -458,6 +437,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -516,17 +514,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -541,6 +528,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -605,6 +603,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -689,7 +698,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -755,7 +764,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -838,17 +847,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -871,9 +869,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

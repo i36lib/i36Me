@@ -197,19 +197,18 @@
         
         <div class="content">
              
-            <p>在项目实施的过程当中，功能顾问与客户沟通需求出好需求文档，技术顾问按需求文档开发报表。有一些非严格性要求的报表客户可能只是拿来看看，对对帐对对数据，这类报表不需要输出成为PDF格式，只需要输出到HTML或者Excel当中进行查看，但同时客户又提供了一个美观可展示的模板，功能顾问往往在Excel当中做好这个模板然后提供在需求开发文档中，例如下图<a id="more"></a>：<br><img src="/i/meP7GEgIAihkZT3.jpg"></p>
+            <p>在项目实施的过程当中，功能顾问与客户沟通需求出好需求文档，技术顾问按需求文档开发报表。有一些非严格性要求的报表客户可能只是拿来看看，对对帐对对数据，这类报表不需要输出成为PDF格式，只需要输出到HTML或者Excel当中进行查看，但同时客户又提供了一个美观可展示的模板，功能顾问往往在Excel当中做好这个模板然后提供在需求开发文档中，例如下图<a id="more"></a>：<br><img src="/i/meP7GEgIAihkZT3.jpg" alt></p>
 <h2 id="输出HTML报表"><a href="#输出HTML报表" class="headerlink" title="输出HTML报表"></a>输出HTML报表</h2><p>如何让它输出到Excel之后还保持原样的美观呢？我们可以通过输出成HTML报表，这样既可以在浏览器中查看，也可以在Excel中查看，关键是用Excel打开这个HTML之后还能保持像原模板一样的美观，而不是四四方方的行列Table结构。快速开发的方法自然不是一行一行编写HTML代码和CSS样式(不少同事这么干，同寝室的哥们儿就是这么干的，然后开发这样一个报表他需要三天，其中一天用来写这个模板)。下面讲述一种我在项目中总结的快速开发这类HTML报表的方法，能极大地提高开发效率，让我们将主要精力和时间集中在报表的取数逻辑SQL的编写上面。</p>
 <h3 id="第一步：制作Html模板"><a href="#第一步：制作Html模板" class="headerlink" title="第一步：制作Html模板"></a>第一步：制作Html模板</h3><p>依据功能顾问给出的需求文档样例，先制作一个Html模板。多数功能顾问都会将模板的源文件(Excel)给你，或者是直接给你，或者是加载到Word需求文档里面。比较坑爹的功能顾问会搞个截图，告诉你做成这个样子，那么你最好去跟他拿到这个他制作的Excel源文档，以便你能直接拷贝。</p>
-<p>首先要处理Excel里面的模板格式，例如该合并单元格的合并单元格，该居中的居中，可以在结果中循环输出结果的则删除其他多余部分，只留下一个Minimum的样例即可，即让你的模板最后变成所见即所得，然后剔除多余部分。这些操作全部在Excel当中完成。之后选中你的模板部分内容，在Excel当中选择** 文件 <strong>/</strong> 另存为 **HTML文件，注意在出现的选项当中选择保存你选中的部分即可，不需要保存整个Sheet页面，然后得到一个初步的HTML文件。</p>
+<p>首先要处理Excel里面的模板格式，例如该合并单元格的合并单元格，该居中的居中，可以在结果中循环输出结果的则删除其他多余部分，只留下一个Minimum的样例即可，即让你的模板最后变成所见即所得，然后剔除多余部分。这些操作全部在Excel当中完成。之后选中你的模板部分内容，在Excel当中选择<strong> 文件 </strong>/<strong> 另存为 </strong>HTML文件，注意在出现的选项当中选择保存你选中的部分即可，不需要保存整个Sheet页面，然后得到一个初步的HTML文件。</p>
 <p>由于是从Excel当中另存生成的HTML页面，所以会有很多冗余代码数据，需要将这部分不影响模板显示的数据删除。凡是不影响HTML模板显示样式的代码都进行删除，然后将HTML代码里面的所有英文单引号替换成英文双引号，并确保HTML头为（不然可能浏览器解析有问题）：</p>
 <figure class="highlight html hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span> <span class="hljs-meta-keyword">PUBLIC</span> <span class="hljs-meta-string">"-//W3C//DTD XHTML 1.0 Transitional//EN"</span> <span class="hljs-meta-string">"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">"http://www.w3.org/1999/xhtml"</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上操作在文本编辑器(例如Sublime Text)当中完成。制作好的HTML模板如下：<br><img src="/i/xiAY3MjeclbEIzO.jpg"></p>
+<p>以上操作在文本编辑器(例如Sublime Text)当中完成。制作好的HTML模板如下：<br><img src="/i/xiAY3MjeclbEIzO.jpg" alt></p>
 <h3 id="第二步：生成输出HTML的代码"><a href="#第二步：生成输出HTML的代码" class="headerlink" title="第二步：生成输出HTML的代码"></a>第二步：生成输出HTML的代码</h3><p>Oracle Erp里面有两张表，All_Source和Dba_Source，这两个表就是存储了你编译到系统里面的源代码，于是就可以将HTML代码粘贴到一个程序包Package（<a href="/down/code/oracle/Chx_Html_Buffer.pck">Chx_Html_Buffer.pck</a>）里面，然后将这个Package编译到系统里面，这样我们就能够根据程序包名来将HTML代码查询出来，然后LOOP一下就可以将他们输出出来了，这部分可以写成一个小程序来完成这个输出工作（<a href="/down/code/oracle/Chx_Wdb_Utl.pck">Chx_Wdb_Utl.pck</a>）。再然后便可以将输出的代码Copy到我们要开发的报表里面，OK，输出模板的代码你就不用愁了，接下来你就可以专注于写你的业务逻辑PLSQL，然后看看哪一个输出在哪一格显示，稍微修改点儿代码就OK了。</p>
-<p>将HTML代码放入Package中进行编译：<br><img src="/i/YVpAy91vFkIbUZa.jpg"><br><img src="/i/qysrSGUQBAelvnD.jpg"></p>
-<p>编写并编译程序脚本，实现从Dba_Source中读取刚才编译进去的HTML代码，以便输出生成HTML模板的PL/SQL代码。通过右键选择Test运行该程序：<br><img src="/i/QzmHnwFD9laGyRt.jpg"></p>
-<p>填写参数，第一个为存储HTML代码的程序包的名称，第二个为该程序包里面HTML代码在程序包主体中开始的行数，第三个为倒数结束的行数，最后一个为即将在报表程序中使用的输出文本的过程名（即用来封装Fnd_File.Put_Line()函数的存储过程，此处为Out_Msg）：<br><img src="/i/vaGcU7FqixkO3s6.jpg"></p>
-<p>运行输出的代码如下，直接将这部分代码复制粘贴到报表程序当中，就实现了输出HTML脚本生成跟需求所要求一样的美观的模板了，而后只需要将注意力集中于业务逻辑的实现即可。最后在定义并发程序的时候将输出类型选择为Html：<br><img src="/i/bOELgn18u5laCmq.jpg"></p>
+<p>将HTML代码放入Package中进行编译：<br><img src="/i/YVpAy91vFkIbUZa.jpg" alt><br><img src="/i/qysrSGUQBAelvnD.jpg" alt></p>
+<p>编写并编译程序脚本，实现从Dba_Source中读取刚才编译进去的HTML代码，以便输出生成HTML模板的PL/SQL代码。通过右键选择Test运行该程序：<br><img src="/i/QzmHnwFD9laGyRt.jpg" alt></p>
+<p>填写参数，第一个为存储HTML代码的程序包的名称，第二个为该程序包里面HTML代码在程序包主体中开始的行数，第三个为倒数结束的行数，最后一个为即将在报表程序中使用的输出文本的过程名（即用来封装Fnd_File.Put_Line()函数的存储过程，此处为Out_Msg）：<br><img src="/i/vaGcU7FqixkO3s6.jpg" alt></p>
+<p>运行输出的代码如下，直接将这部分代码复制粘贴到报表程序当中，就实现了输出HTML脚本生成跟需求所要求一样的美观的模板了，而后只需要将注意力集中于业务逻辑的实现即可。最后在定义并发程序的时候将输出类型选择为Html：<br><img src="/i/bOELgn18u5laCmq.jpg" alt></p>
 <h2 id="步骤简单总结"><a href="#步骤简单总结" class="headerlink" title="步骤简单总结"></a>步骤简单总结</h2><p>即写代码生成代码</p>
 <ol>
 <li>从需求文档(Excel模板)整理好HTML模板</li>
@@ -379,25 +378,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -427,6 +407,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -485,17 +484,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -510,6 +498,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -574,6 +573,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -658,7 +668,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -724,7 +734,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -807,17 +817,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -840,9 +839,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

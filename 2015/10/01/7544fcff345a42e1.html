@@ -189,40 +189,28 @@
         
         <div class="content">
              
-            <p>以前租用服务器自己买域名，自己搭建系统构建环境来玩Wordpress博客，要每个月交钱还要经常备份；最近决定抛弃Wordpress拥抱github pages，使用Hexo来构建博客然后放到Github Page上，这样就不用考虑域名备案和租用服务器，成本低到只需要一个域名。</p>
-<a id="more"></a>
-
+            <p>以前租用服务器自己买域名，自己搭建系统构建环境来玩Wordpress博客，要每个月交钱还要经常备份；最近决定抛弃Wordpress拥抱github pages，使用Hexo来构建博客然后放到Github Page上，这样就不用考虑域名备案和租用服务器，成本低到只需要一个域名。<br><a id="more"></a></p>
 <h2 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h2><p>安装<a href="http://git-scm.com/" target="_blank" rel="noopener">Git</a> (<a href="http://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Git Doc</a>)，若安装了Xcode则默认会安装<a href="http://git-scm.com/download/mac" target="_blank" rel="noopener">Git for Mac</a>。然后下载安装<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">Node.js</a>引擎，很简单。</p>
 <h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>安装好了Node.js就可以使用<code>npm</code>命令安装Hexo</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
 <p>很可能会出现权限问题导致安装失败，可使用<code>sudo</code>重试</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
 <h2 id="配置博客目录"><a href="#配置博客目录" class="headerlink" title="配置博客目录"></a>配置博客目录</h2><p>任意一个文件夹作为blog工作区，如命名为blogws，然后初始化该文件夹为博客工作区，如果更换了文件夹，同样要执行以下操作来初始化工作区。<code>注意</code>：应该尽量避免使用sudo来做接下来的一些列操作，因为使用sudo意味着文件权限归属是超级用户而不是当前用户，这在后面可能会引起一些问题，例如远程部署到github上的时候，就不能使用超级用户也就是sudo来部署，这会被github服务器拒绝，参见<a href="https://help.github.com/articles/error-permission-denied-publickey/" target="_blank" rel="noopener">链接</a>。</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> mkdir blogws</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> blogws</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> hexo init</span></span><br></pre></td></tr></table></figure>
-
 <p>根据提示安装其他依赖：</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install</span><br></pre></td></tr></table></figure>
-
 <p>这样一个基本的博客工作目录就完成了，但这样还远远不够。事实上Hexo只是提供了一个平台，我们还需要安装其他的Hexo插件来完成诸如静态页面生成、本地预览、远程部署(例如部署到Git服务器)等，关于Hexo的可用插件可以在<a href="https://hexo.io/plugins/" target="_blank" rel="noopener">这个链接</a>当中找到。Hexo及其插件是基于Node.js来开发的，安装的命令一般为</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install &lt;hexo-plugin-name&gt; --save</span></span><br></pre></td></tr></table></figure>
-
 <p>安装完成后相应的组件就会安装到博客目录中的node_modules文件夹下。针对我自己的情况，我安装了如下组件：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-search</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-deployer-git --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-generator-archive --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-generator-category --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-generator-feed --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-generator-index --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-generator-sitemap --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-generator-tag --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-renderer-ejs --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-renderer-marked --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-renderer-stylus --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-ruby-character --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-server --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-tag-bootstrap --save</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> npm install hexo-uglify --save <span class="hljs-comment"># compress js</span></span></span><br></pre></td></tr></table></figure>
-
 <p>其中server用来在本地预览，deployer-git用来部署到git服务器，如果你需要部署到其他类型的服务器，就需要安装其他组件如Heroku、OpenShift、Rsync、Amazon S3等等，参考<a href="https://hexo.io/plugins/" target="_blank" rel="noopener">Hexo Plugin</a>来下载安装相应组件。对于安装静态页面生成器，如果想偷懒就直接把generator全部安装了，如</p>
 <figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo --save</span><br><span class="line">$ npm install hexo-generator-* --save</span><br></pre></td></tr></table></figure>
-
 <h2 id="撰写发布"><a href="#撰写发布" class="headerlink" title="撰写发布"></a>撰写发布</h2><p>在source/_post下撰写博客文章(*.md文本文件)，撰写文章需要学一下<a href="https://help.github.com/articles/markdown-basics/" target="_blank" rel="noopener">Markdown标记语法</a>。在blogws文件夹下使用命令在本地预览，如果成功(看提示)则可以通过地址<a href="http://0.0.0.0:4000/" target="_blank" rel="noopener">http://0.0.0.0:4000/</a>(地址和端口可在blogws下的_config.yml文件中配置)来在本地预览博客(需要安装hexo-server)</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> hexo server   <span class="hljs-comment"># or hexo s</span></span></span><br></pre></td></tr></table></figure>
-
 <p>在blogws文件夹下使用命令生成静态页面(需要安装hexo-generator-*)</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> hexo generate   <span class="hljs-comment"># or hexo g</span></span></span><br></pre></td></tr></table></figure>
-
 <p>使用下面的命令</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> hexo deploy   <span class="hljs-comment"># or hexo d</span></span></span><br></pre></td></tr></table></figure>
-
 <p>来将静态页面发布到GitHub(需要配置ssh，参见<a href="https://help.github.com/articles/generating-ssh-keys/" target="_blank" rel="noopener">如何在Github配置SSH</a>，需要配置<a href="https://hexo.io/docs/configuration.html" target="_blank" rel="noopener">_config.yml</a>)这里不要使用sudo，否则会部署失败，参见<a href="https://help.github.com/articles/error-permission-denied-publickey/" target="_blank" rel="noopener">链接</a>。发布需要会使用Git，Git类似svn，是用来做版本管理的，但它比svn更强大，<a href="http://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Git使用参考</a>。</p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
 <li><a href="http://git-scm.com/book/zh/v2" target="_blank" rel="noopener">Git Docs</a></li>
@@ -390,25 +378,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -438,6 +407,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -496,17 +484,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -521,6 +498,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -585,6 +573,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -669,7 +668,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -735,7 +734,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -818,17 +817,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -851,9 +839,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

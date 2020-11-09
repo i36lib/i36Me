@@ -193,10 +193,8 @@
              
             <p>项目中要求在一个平台中只允许应用文件夹而不允许执行删除、新建等其他文件夹操作，这些操作在另外的地方进行定义，可通过在该平台中使用form功能参数的形式来为按钮关联指定的文件夹，然后分配给用户，每个用户通过点击按钮或者在form打开的时候就自动Load一个定义好的文件夹，这里提供点击按钮打开指定文件夹的测试代码，将这部分代码添加到button的<code>when-button-pressed</code>触发器当中即可。另外在禁用文件夹的时候还要在触发器代码的末尾以及使用到<code>App_Folder.Event(&#39;XXX&#39;);</code> 代码的触发器后面添加禁用文件夹菜单和打开文件夹按钮的代码。</p>
 <a id="more"></a>
-
 <p>Just a sample code:</p>
 <figure class="highlight sql hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">--</span></span><br><span class="line"><span class="hljs-comment">-- 点击按钮打开定义好的文件夹,在button的when-button-pressed中添加代码：</span></span><br><span class="line"><span class="hljs-comment">--------------------------------------------------------------</span></span><br><span class="line">App_Folder_Frd_Stmt('Entering app_folder_load_fldr.');</span><br><span class="line">Copy(Fnd_Utilities.Current_Language, 'global.app_folder_lang_id');</span><br><span class="line">Copy(App_Folder.Curr_Object, 'global.app_folder_object_id');</span><br><span class="line">Copy(To_Char(App_Folder.Curr_User_Id), 'global.app_folder_user_id');</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">SELECT</span> T.Folder_Id</span><br><span class="line">  <span class="hljs-keyword">INTO</span> App_Folder.Curr_Folder_Id</span><br><span class="line">  <span class="hljs-keyword">FROM</span> Fnd_Folders t</span><br><span class="line"> <span class="hljs-keyword">WHERE</span> T.Object = <span class="hljs-string">'ORDER_LINES'</span><span class="hljs-comment">--Folder define code</span></span><br><span class="line">   <span class="hljs-keyword">AND</span> T.Name = <span class="hljs-string">'柜身_NEW'</span>; <span class="hljs-comment">--Folder Name</span></span><br><span class="line">     </span><br><span class="line">IF NOT App_Folder_Get_Folder_Cont(App_Folder.Curr_Folder_Id) THEN</span><br><span class="line">  App_Folder_Get_Onscrn_List;</span><br><span class="line"><span class="hljs-keyword">END</span> <span class="hljs-keyword">IF</span>;</span><br><span class="line">App_Folder_Paint_List;</span><br><span class="line"></span><br><span class="line">Copy('OPEN-FOLDER', 'global.folder_action');</span><br><span class="line">Copy(To_Char(App_Folder.Curr_Folder_Id), 'global.folder_id');</span><br><span class="line">Execute_Trigger('folder_return_action');</span><br><span class="line">  </span><br><span class="line">App_Folder_Autoquery(Name_In('system.cursor_block'));</span><br><span class="line">App_Folder.Pending_Where_Clause := NULL;</span><br><span class="line"><span class="hljs-comment">--</span></span><br><span class="line">App_Folder_Move_Cursor('1');</span><br><span class="line">App_Folder_Set_Instance_Values;</span><br></pre></td></tr></table></figure>
-
 <p>结果如图所示：<br><img src="/i/dAegOfmaFzvnCjD.jpg" alt="Form中点击按钮打开指定的已定义文件夹"></p>
 
         </div>
@@ -344,25 +342,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -392,6 +371,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -450,17 +448,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -475,6 +462,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -539,6 +537,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -623,7 +632,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -689,7 +698,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -772,17 +781,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -805,9 +803,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

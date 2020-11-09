@@ -191,17 +191,12 @@
         
         <div class="content">
              
-            <p>内存对齐是编译器做的事情，但程序员如果明白其中的原理，将有助于写出更好的程序。在C/C++的结构体(Struct)当中，各个不同类型的成员的先后排列次序极大的可能会影响到该结构体占用内存空间的大小。先来看一个例子，在这个例子当中定义两个结构体，里面的成员是一样的，区别只在于排列顺序不同。</p>
-<a id="more"></a>
-
+            <p>内存对齐是编译器做的事情，但程序员如果明白其中的原理，将有助于写出更好的程序。在C/C++的结构体(Struct)当中，各个不同类型的成员的先后排列次序极大的可能会影响到该结构体占用内存空间的大小。先来看一个例子，在这个例子当中定义两个结构体，里面的成员是一样的，区别只在于排列顺序不同。<br><a id="more"></a></p>
 <h2 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h2><figure class="highlight cpp hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/* #pragma pack(8) */</span></span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/* Under x86-64bit CPU, Fedora22, GCC, default pack(8) */</span></span><br><span class="line"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="hljs-function"></span>&#123;</span><br><span class="line">    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Test1</span>&#123;</span> <span class="hljs-comment">/* logical address start with 0 */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar1; <span class="hljs-comment">/* map address 0, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar1; <span class="hljs-comment">/* map address 4, size 1 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar2; <span class="hljs-comment">/* map address 8, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">double</span> dvar1; <span class="hljs-comment">/* map address 16, size 8 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> *pivar; <span class="hljs-comment">/* map address 24, size 8 Bytes(8x8bit=64bit) */</span></span><br><span class="line">        <span class="hljs-keyword">float</span> *pfvar; <span class="hljs-comment">/* map address 32, size 8 Bytes(8x8bit=64bit) */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar2; <span class="hljs-comment">/* map address 40, size 1 Bytes */</span></span><br><span class="line">    &#125;; <span class="hljs-comment">/* End of address 41, size: (41/8)*8+41%8=48 Bytes */</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Test2</span> &#123;</span> <span class="hljs-comment">/* logical address start with 0 */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar1; <span class="hljs-comment">/* map address 0, size 1 Byte */</span></span><br><span class="line">        <span class="hljs-keyword">char</span> cvar2; <span class="hljs-comment">/* map address 1, size 1 Byte */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar1; <span class="hljs-comment">/* map address 4, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> ivar2; <span class="hljs-comment">/* map address 8, size 4 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">double</span> dvar1; <span class="hljs-comment">/* map address 16, size 8 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">int</span> *pivar; <span class="hljs-comment">/* map address 24, size 8 Bytes */</span></span><br><span class="line">        <span class="hljs-keyword">float</span> *pfvar; <span class="hljs-comment">/* map address 32, size 8 Bytes */</span></span><br><span class="line">    &#125;; <span class="hljs-comment">/* End of address 40, size: (40/8)*8+40%8=40 Bytes */</span></span><br><span class="line"></span><br><span class="line">    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Size of struct Test1: %d Bytes.\n"</span>, <span class="hljs-keyword">sizeof</span>(struct Test1));</span><br><span class="line">    <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Size of struct Test2: %d Bytes.\n"</span>, <span class="hljs-keyword">sizeof</span>(struct Test2));</span><br><span class="line"></span><br><span class="line">    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;</span><br><span class="line">&#125; <span class="hljs-comment">/* main */</span></span><br></pre></td></tr></table></figure>
-
 <p>在Fedora22/Gcc下的测试：</p>
 <figure class="highlight bash hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[fury@localhost clabs]$ gcc -o exe struct.c -g</span><br><span class="line">[fury@localhost clabs]$ ./exe</span><br><span class="line">Size of struct Test1: 48 Bytes.</span><br><span class="line">Size of struct Test2: 40 Bytes.</span><br><span class="line">[fury@localhost clabs]$</span><br></pre></td></tr></table></figure>
-
 <p>可以看到，排列顺序的不同使得内存占用大小相差了8个字节。或者将结构体这么排列，虽然结果还是40Bytes，但成员的对齐已经发生变化了，经过对比或许你能理解得更清晰：</p>
 <figure class="highlight cpp hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">Test3</span> &#123;</span> <span class="hljs-comment">/* logical address start with 0 */</span></span><br><span class="line">    <span class="hljs-keyword">int</span> ivar1; <span class="hljs-comment">/* map address 0, size 4 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">int</span> ivar2; <span class="hljs-comment">/* map address 4, size 4 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">double</span> dvar1; <span class="hljs-comment">/* map address 8, size 8 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">int</span> *pivar; <span class="hljs-comment">/* map address 16, size 8 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">float</span> *pfvar; <span class="hljs-comment">/* map address 24, size 8 Bytes */</span></span><br><span class="line">    <span class="hljs-keyword">char</span> cvar1; <span class="hljs-comment">/* map address 32, size 1 Byte */</span></span><br><span class="line">    <span class="hljs-keyword">char</span> cvar2; <span class="hljs-comment">/* map address 33, size 1 Byte */</span></span><br><span class="line">&#125;; <span class="hljs-comment">/* End of address 34, size: (34/8)*8+34%8=40 Bytes */</span></span><br></pre></td></tr></table></figure>
-
 <p>到了这里，依靠代码的注释或许你已经看出一些端倪了。先解释几个关键点，然后再结合上面的代码例子来分析。</p>
 <h3 id="内存编址"><a href="#内存编址" class="headerlink" title="内存编址"></a>内存编址</h3><p>以<code>x86架构CPU</code>为例。内存基本单元的大小是<code>1Byte(8bit)</code>，若是<code>32位</code>机即数据总线宽度为32位，可<code>同时</code>传输32个0/1位，以一个字节编一个地址，根据排列组合原理就有2^32个地址，每个地址是一个内存单元，大小为1Byte(8bit)，则该CPU最大内存寻址能力将为<code>2^32 x 8bit = 4 x 2^30 x 1Byte = 4 x 1G x 1Byte = 4GBytes(即4GB)</code>。这就是通常所说的32机理论可使用最大内存为4GB，同理<code>64位</code>机就是2^64字节。<br><img src="/i/Fbn7RXfmhDLKTrx.png" alt="内存结构示意图"></p>
 <h3 id="对齐系数"><a href="#对齐系数" class="headerlink" title="对齐系数"></a>对齐系数</h3><p>每个编译器都有自己默认的对齐系数。以x86-64/Fedora22为例，gcc的默认对齐系数是8，为什么是8呢？因为机器是64位，而8位是一个字节，<code>64bit/8bit=8Bytes</code>，也就是说它一下子可以取8个字节。所以若是32位机，那么最佳的对齐系数应该为4。可以在代码中使用<code>#pragma pack(n) /* n取1,2,4,8,16即2的整次幂 */</code>来更改编译器默认的对齐系数。</p>
@@ -417,25 +412,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -465,6 +441,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -523,17 +518,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -548,6 +532,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -612,6 +607,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -696,7 +702,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -762,7 +768,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -845,17 +851,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -878,9 +873,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

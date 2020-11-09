@@ -195,7 +195,6 @@
 <h2 id="工作机制"><a href="#工作机制" class="headerlink" title="工作机制"></a>工作机制</h2><p><img src="/i/aOkh2vwg5J9XpMm.png" alt="Forall工作机制图解"></p>
 <p>Just a Sample code:</p>
 <figure class="highlight sql hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">DECLARE</span></span><br><span class="line">  bulk_error <span class="hljs-keyword">EXCEPTION</span>; <span class="hljs-comment">--&gt;&gt;声明 Forall 异常,代码为 -24381</span></span><br><span class="line">  <span class="hljs-keyword">PRAGMA</span> EXCEPTION_INIT(bulk_error, <span class="hljs-number">-24381</span>);</span><br><span class="line">  TYPE tbl_exc_type IS TABLE OF PLS_INTEGER INDEX BY PLS_INTEGER;</span><br><span class="line"></span><br><span class="line">  l_exc_tbl   tbl_exc_type;</span><br><span class="line">  l_error_msg VARCHAR2(2000);</span><br><span class="line">  l_iface_tbl cux_om_ordimp_define_pub.tbl_pub_header_iface;</span><br><span class="line"><span class="hljs-keyword">BEGIN</span></span><br><span class="line">  l_exc_tbl.delete;</span><br><span class="line">  FORALL idx IN 1 .. l_iface_tbl.count SAVE EXCEPTIONS <span class="hljs-comment">--&gt;&gt;保存异常</span></span><br><span class="line">    <span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> cux_om_so_headers_int</span><br><span class="line">    <span class="hljs-keyword">VALUES</span></span><br><span class="line">      (l_iface_tbl(idx).group_id</span><br><span class="line">      ,l_iface_tbl(idx).source_code</span><br><span class="line">      ,l_iface_tbl(idx).ordered_date</span><br><span class="line">      ,l_iface_tbl(idx).project_number</span><br><span class="line">      ,l_iface_tbl(idx).order_type</span><br><span class="line">      ,l_iface_tbl(idx).customer_number</span><br><span class="line">      ,l_iface_tbl(idx).operation_code</span><br><span class="line">      ,l_iface_tbl(idx).operation_date</span><br><span class="line">      ,l_iface_tbl(idx).batch_id</span><br><span class="line">      ,l_iface_tbl(idx).process_code</span><br><span class="line">      ,l_iface_tbl(idx).process_date</span><br><span class="line">      ,l_iface_tbl(idx).error_msg</span><br><span class="line">      ,l_iface_tbl(idx).currency_code</span><br><span class="line">      ,l_iface_tbl(idx).creation_date</span><br><span class="line">      ,l_iface_tbl(idx).created_by</span><br><span class="line">      ,l_iface_tbl(idx).last_updated_by</span><br><span class="line">      ,l_iface_tbl(idx).last_update_date</span><br><span class="line">      ,l_iface_tbl(idx).last_update_login</span><br><span class="line">      ,l_iface_tbl(idx).attribute_category</span><br><span class="line">      ,l_iface_tbl(idx).attribute1</span><br><span class="line">      ,l_iface_tbl(idx).attribute2</span><br><span class="line">      ,l_iface_tbl(idx).attribute3</span><br><span class="line">      ,l_iface_tbl(idx).attribute4</span><br><span class="line">      ,l_iface_tbl(idx).attribute5</span><br><span class="line">      ,l_iface_tbl(idx).attribute6</span><br><span class="line">      ,l_iface_tbl(idx).attribute7</span><br><span class="line">      ,l_iface_tbl(idx).attribute8</span><br><span class="line">      ,l_iface_tbl(idx).attribute9</span><br><span class="line">      ,l_iface_tbl(idx).attribute10);</span><br><span class="line">EXCEPTION</span><br><span class="line">  WHEN bulk_error THEN</span><br><span class="line">    <span class="hljs-comment">--&gt;&gt; 捕获异常</span></span><br><span class="line">    FOR i IN 1 .. SQL%bulk_exceptions.count LOOP</span><br><span class="line">      <span class="hljs-comment">--&gt;&gt;记录了错误时执行的行</span></span><br><span class="line">      l_exc_tbl(i) := SQL%BULK_EXCEPTIONS(i).error_index;</span><br><span class="line">      l_error_msg := SQLERRM(-sql%BULK_EXCEPTIONS(i).error_code);</span><br><span class="line">      l_iface_tbl(l_exc_tbl(i)).err_msg := substrb(l_error_msg</span><br><span class="line">                                                  ,1</span><br><span class="line">                                                  ,2000);</span><br><span class="line">    <span class="hljs-keyword">END</span> <span class="hljs-keyword">LOOP</span>;</span><br><span class="line">  </span><br><span class="line">    <span class="hljs-comment">--&gt;&gt; 回写异常行</span></span><br><span class="line">    FOR i IN 1 .. l_excp_tbl.count LOOP</span><br><span class="line">      <span class="hljs-keyword">UPDATE</span> cux_ebs_control cec <span class="hljs-comment">-- ctrl_id is Unique Idx</span></span><br><span class="line">         <span class="hljs-keyword">SET</span> cec.process_code = <span class="hljs-string">'ERROR'</span></span><br><span class="line">            ,cec.process_date = <span class="hljs-keyword">SYSDATE</span></span><br><span class="line">            ,cec.error_msg    = l_iface_tbl(l_exc_tbl(i)).err_msg</span><br><span class="line">       <span class="hljs-keyword">WHERE</span> cec.ctrl_id = l_iface_tbl(l_exc_tbl(i)).ctrl_id;</span><br><span class="line">    <span class="hljs-keyword">END</span> <span class="hljs-keyword">LOOP</span>;</span><br><span class="line"><span class="hljs-keyword">END</span>;</span><br></pre></td></tr></table></figure>
-
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
 <li><a href="https://search.oracle.com/search/search" target="_blank" rel="noopener">Oracle Search</a></li>
 <li><a href="http://docs.oracle.com/cd/E11882_01/appdev.112/e25519/forall_statement.htm" target="_blank" rel="noopener">FORALL Statement Usage</a></li>
@@ -355,25 +354,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -403,6 +383,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -461,17 +460,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -486,6 +474,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -550,6 +549,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -634,7 +644,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -700,7 +710,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -783,17 +793,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -816,9 +815,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>

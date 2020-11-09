@@ -192,14 +192,12 @@
         <div class="content">
              
             <p>在虚拟机中安装RHEL做实验，安装时没有选择安装任何服务器组件，打算在安装完成基本系统之后自己再装的，但在进入系统安装软件时发现提示有依赖无法安装。<a id="more"></a>后来通过建立本地源的方式来解决了部分问题，说是解决部分问题是因为需要的软件包可能在安装包中就有，没有的就没办法解决了。制作本地源的方法是将ISO安装镜像拷贝到系统内，然后建立索引文件。</p>
-<h2 id="建立本地源"><a href="#建立本地源" class="headerlink" title="建立本地源"></a>建立本地源</h2><p>其中的Packages文件夹中就存储着该镜像所包含的所有RPM软件包，需要用它来建立本地源。如在<code>/</code>挂载点下建立文件夹LocalRepo，将整个镜像里面的文件拷贝到RHEL中：<br><img src="/i/Usl1eZ5qmKXjNBI.png"></p>
+<h2 id="建立本地源"><a href="#建立本地源" class="headerlink" title="建立本地源"></a>建立本地源</h2><p>其中的Packages文件夹中就存储着该镜像所包含的所有RPM软件包，需要用它来建立本地源。如在<code>/</code>挂载点下建立文件夹LocalRepo，将整个镜像里面的文件拷贝到RHEL中：<br><img src="/i/Usl1eZ5qmKXjNBI.png" alt></p>
 <h2 id="建库索引文件"><a href="#建库索引文件" class="headerlink" title="建库索引文件"></a>建库索引文件</h2><p>在RHEL中打开文件夹<code>/etc/yum.repos.d</code>，在其下建立一个<code>*.repo</code>文件如<code>public-yum-ol6.repo</code>，文件的内容如下：</p>
 <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-section">[ol6_latest]</span></span><br><span class="line"><span class="hljs-attr">name</span>=Oracle_Linux_6</span><br><span class="line"><span class="hljs-attr">baseurl</span>=file:///LocalRepo</span><br><span class="line"><span class="hljs-attr">gpgkey</span>=file:///LocalRepo/RPM-GPG-KEY-redhat-release</span><br><span class="line"><span class="hljs-attr">gpgcheck</span>=<span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-attr">enabled</span>=<span class="hljs-number">1</span></span><br></pre></td></tr></table></figure>
-
 <p>其中enable指明该源是否可用。由于源是在本地的<code>/LocalRepo</code>，所以<code>baseurl</code>写为<code>baseurl=file: ///LocalRepo</code>，<code>gpgkey</code>是一个源标识文件，该文件可以在ISO镜像中找到，不同版本的RHEL ISO镜像其<code>gpgkey file</code>可能不同，需要打开ISO查看，从上图可用看出该ISO镜像中的<code>gpgkey file</code>为<code>RPM-GPG-KEY-redhat-release</code>，所以<code>gpgkey</code>为：<code>gpgkey=file:///LocalRepo/RPM- GPG-KEY-redhat-release</code>。编写好repo文件之后保存，这样就可以使用本地源了。</p>
 <h2 id="使用本地源"><a href="#使用本地源" class="headerlink" title="使用本地源"></a>使用本地源</h2><p>使用本地源即与一般的使用<code>yum</code>命令一样，只是建立本地源之后<code>yum</code>会自动在本地源中搜索。使用-Uvh命令可以解决依赖问题（<code>yum</code>自动搜索并解决依赖）。更好的方法是找到rpm包之后直接双击安装，这样也会自动搜索解决依赖。</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> rpm -Uvh *.rmp</span></span><br></pre></td></tr></table></figure>
-
 
         </div>
         
@@ -358,25 +356,6 @@
         
         <article class="media">
             
-            <a href="/2019/09/01/250e6c061fdf4002.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/TeNq5cxcJb8RCVe.png" alt="全链路日志追踪TraceID实现">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-08-31T16:00:00.000Z">2019-09-01</time></div>
-                    <a href="/2019/09/01/250e6c061fdf4002.html" class="has-link-black-ter is-size-6">全链路日志追踪TraceID实现</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Python/">Python</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
-        <article class="media">
-            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -406,6 +385,25 @@
                 <div class="content">
                     <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
                     <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
                     <p class="is-size-7 is-uppercase">
                         <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </p>
@@ -464,17 +462,6 @@
         <ul class="menu-list">
         
         <li>
-            <a class="level is-marginless" href="/archives/2019/09/">
-                <span class="level-start">
-                    <span class="level-item">九月 2019</span>
-                </span>
-                <span class="level-end">
-                    <span class="level-item tag">1</span>
-                </span>
-            </a>
-        </li>
-        
-        <li>
             <a class="level is-marginless" href="/archives/2019/03/">
                 <span class="level-start">
                     <span class="level-item">三月 2019</span>
@@ -489,6 +476,17 @@
             <a class="level is-marginless" href="/archives/2016/07/">
                 <span class="level-start">
                     <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
                 </span>
                 <span class="level-end">
                     <span class="level-item tag">1</span>
@@ -553,6 +551,17 @@
                 标签
             </h3>
             <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
                 
                 <li>
                     <a class="level is-marginless" href="/tags/C/">
@@ -637,7 +646,7 @@
                             <span class="level-item">Java</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">1</span>
+                            <span class="level-item tag">2</span>
                         </span>
                     </a>
                 </li>
@@ -703,7 +712,7 @@
                             <span class="level-item">Python</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">2</span>
+                            <span class="level-item tag">1</span>
                         </span>
                     </a>
                 </li>
@@ -786,17 +795,6 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/分布式/">
-                        <span class="level-start">
-                            <span class="level-item">分布式</span>
-                        </span>
-                        <span class="level-end">
-                            <span class="level-item tag">1</span>
-                        </span>
-                    </a>
-                </li>
-                
-                <li>
                     <a class="level is-marginless" href="/tags/博客/">
                         <span class="level-start">
                             <span class="level-item">博客</span>
@@ -819,9 +817,9 @@
                 </li>
                 
                 <li>
-                    <a class="level is-marginless" href="/tags/日志追踪/">
+                    <a class="level is-marginless" href="/tags/数组/">
                         <span class="level-start">
-                            <span class="level-item">日志追踪</span>
+                            <span class="level-item">数组</span>
                         </span>
                         <span class="level-end">
                             <span class="level-item tag">1</span>
