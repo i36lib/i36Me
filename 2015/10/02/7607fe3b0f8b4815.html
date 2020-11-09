@@ -191,20 +191,28 @@
              
             <p>官方在2015年5月26日发布了Fedora 22，这里基于该版本的服务器和VSFTPD，记录如何安装配置FTP服务器。</p>
 <a id="more"></a>
+
 <h2 id="安装VSFTP"><a href="#安装VSFTP" class="headerlink" title="安装VSFTP"></a>安装VSFTP</h2><p>服务器版本：<code>Fedora Server 22</code>。安装vsftpd，使用以下命令(Fedora22，之前的请使用<code>yum</code>命令替代<code>dnf</code>命令)</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo dnf install vsftpd</span></span><br></pre></td></tr></table></figure>
+
 <p>配置文件在<code>/etc/vsftpd/</code>目录下，名为<code>vsftpd.conf</code>，服务器的根目录在<code>/var/ftp</code>下，其中匿名账户的目录为子目录<code>/var/ftp/pub</code>，为了简便直接修改配置使用匿名账户来上传下载文件，开启下列配置项：</p>
 <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-attr">anonymous_enable</span>=<span class="hljs-literal">YES</span></span><br><span class="line"><span class="hljs-attr">write_enable</span>=<span class="hljs-literal">YES</span></span><br><span class="line"><span class="hljs-attr">anon_upload_enable</span>=<span class="hljs-literal">YES</span></span><br><span class="line"><span class="hljs-attr">anon_mkdir_write_enable</span>=<span class="hljs-literal">YES</span></span><br></pre></td></tr></table></figure>
+
 <p>可能需要关闭防火墙才可以访问。Fedora 17及以前的版本关闭防火墙用命令：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo systemctl stop iptables.service</span></span><br></pre></td></tr></table></figure>
+
 <p>Fedora 18及上名字改为了firewalld，即：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo systemctl stop firewalld.service</span></span><br></pre></td></tr></table></figure>
+
 <p>如果想禁止该服务项自启动可执行以下命令来关闭服务：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo systemctl <span class="hljs-built_in">disable</span> firewalld.service</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="配置VSFTP"><a href="#配置VSFTP" class="headerlink" title="配置VSFTP"></a>配置VSFTP</h2><p>查看文件<code>/etc/passwd</code>中ftp一项的值<code>ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin</code>，可以看出ftp的跟目录<code>/var/ftp</code>禁止ftp这个用户从控制台登陆，即只能从ftp访问。对于匿名ftp用户，为了让其能够上传下载文件，需要修改<code>/var/ftp</code>和<code>/var/ftp/pub</code>目录的相应权限：<code>/var/ftp/pub</code>需要修改为<code>744</code>，归属和组别都要设置为<code>ftp</code>，否则在CWD该目录时会报错<code>Response: 550 Failed to change directory. Error: Failed to retrieve directory listing</code>，而<code>/var/ftp</code>则使用<code>755</code>，用户和归属为<code>root</code>。综上做如下设置：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> /var/</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chown -R root:root ftp</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chmod -R 755 /var/ftp</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chown -R ftp:ftp ftp/pub</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chmod -R 744 ftp/pub</span></span><br></pre></td></tr></table></figure>
+
 <p>此外需要关闭SELINUX，否则无法上传文件，会报错误：<code>553 Could not create file. Error: Critical file transfer error</code>，将SELINUX值由默认的enforcing改为permissive，然后重启：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[admin@svr] cd /etc/selinux</span><br><span class="line">[admin@svr] sudo vim config</span><br><span class="line"><span class="hljs-meta">#</span><span class="hljs-bash">SELINUX=enforcing</span></span><br><span class="line">SELINUX=permissive</span><br><span class="line"><span class="hljs-meta">[admin@svr]$</span></span><br></pre></td></tr></table></figure>
+
 <p>不想重启机器的情况下也可以执行命令<code>setenforce 0</code>。命令<code>setenforce 1</code>设置SELinux 成为<code>enforcing</code>模式；<code>setenforce 0</code>设置SELinux 成为<code>permissive</code>模式。</p>
 <h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ol>
 <li><a href="http://vsftpd.beasts.org/" target="_blank" rel="noopener">vsftp</a> | <a href="http://vsftpd.beasts.org/doc" target="_blank" rel="noopener">docs</a></li>

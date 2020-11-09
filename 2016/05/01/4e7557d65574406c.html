@@ -165,7 +165,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分钟 读完 (大约 1725 个字)
+                    11 分钟 读完 (大约 1724 个字)
                 </span>
                 
             </div>
@@ -264,7 +264,7 @@
 <ol>
 <li><code>ArrayList&lt;E&gt;</code>没有加锁同步，它不是线程安全的；</li>
 <li>使用默认构造函数新建一个<code>ArrayList&lt;E&gt;</code>对象在未使用之前它是空的，直到调用<code>ensureCapacity</code>或者<code>add</code>方法时才去扩容数组空间，至少为<code>10</code>个元素容量大小；</li>
-<li>已分配过空间再进行扩容的机制，至少扩容为已有容量的一半，如果扩容超出整型最大值的情况下（可能是按已有容量一半进行扩容的）重新判断，尝试按最小扩容量进行扩容，如果还是超出整型最大值则抛异常，否则如果没超出<strong>MAX_ARRAY_LENGTH</strong>则返回<strong>MAX_ARRAY_LENGTH</strong>，否则返回整型最大值;</li>
+<li>已分配过空间再进行扩容的机制：尝试扩容为已有容量的1.5倍，如果扩容超出整型最大值的情况下（可能是按已有容量一半进行扩容的）重新判断，尝试按最小扩容量进行扩容，如果还是超出整型最大值则抛异常，否则如果没超出<strong>MAX_ARRAY_LENGTH</strong>则返回<strong>MAX_ARRAY_LENGTH</strong>，否则返回整型最大值;</li>
 <li>求与另一个集合的差集、并集时采用了双指针的技巧。</li>
 </ol>
 

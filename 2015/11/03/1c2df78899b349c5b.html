@@ -191,18 +191,25 @@
              
             <p>通过shell登录远端Linux服务器有两种基本方式，一种是使用用户名密码，一种是使用SSH公私钥认证，这里记录如何开启Linux系统下的SSH RSA登录认证。</p>
 <a id="more"></a>
+
 <h2 id="开启RSA认证"><a href="#开启RSA认证" class="headerlink" title="开启RSA认证"></a>开启RSA认证</h2><p>远程服务器上SSH的配置文件<code>/etc/ssh/sshd_config</code>指定了是否开启RSA认证，修改该配置文件需要root权限。开启RSA认证要保证该配置文件中的如下选项被开启：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile      .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
 <p>然后在用户的<code>home</code>目录下创建文件夹<code>.ssh</code>并在该文件夹里面<code>authorized_keys</code>文件，设置权限：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span></span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chmod 700 .ssh</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chmod 600 .ssh/authorized_keys</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="创建SSH-Key"><a href="#创建SSH-Key" class="headerlink" title="创建SSH Key"></a>创建SSH Key</h2><p>这里举例类Unix客户端环境，例如我的是Macbook Pro：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ssh-keygen -t rsa -b 4096 -C <span class="hljs-string">"your_email@example.com"</span></span></span><br><span class="line">Generating public/private rsa key pair.</span><br></pre></td></tr></table></figure>
-<p>以上命令用于使用名称ID “your_email@example.com” 来生成公钥/私钥对，如下指定生成的私钥存放地址和私钥密码：</p>
+
+<p>以上命令用于使用名称ID “<a href="mailto:&#x79;&#x6f;&#x75;&#114;&#x5f;&#x65;&#x6d;&#x61;&#105;&#108;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#x6d;" target="_blank" rel="noopener">&#x79;&#x6f;&#x75;&#114;&#x5f;&#x65;&#x6d;&#x61;&#105;&#108;&#64;&#101;&#120;&#97;&#109;&#x70;&#108;&#x65;&#46;&#x63;&#111;&#x6d;</a>“ 来生成公钥/私钥对，如下指定生成的私钥存放地址和私钥密码：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Enter a file in which to save the key (/Users/you/.ssh/id_rsa): [回车]</span><br><span class="line">Enter passphrase (empty for no passphrase): [输入密码]</span><br><span class="line">Enter same passphrase again: [再次输入密码]</span><br></pre></td></tr></table></figure>
+
 <p>启动<code>ssh-agent</code>然后添加私钥到<code>ssh-agent</code> ：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">eval</span> <span class="hljs-string">"(ssh-agent -s)"</span></span></span><br><span class="line">Agent pid 2153</span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ssh-add ~/.ssh/id_rsa</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="添加公钥到服务器"><a href="#添加公钥到服务器" class="headerlink" title="添加公钥到服务器"></a>添加公钥到服务器</h2><p>将<code>~/.ssh/id_rsa.pub</code>公钥的内容拷贝到剪贴板（Mac下可以使用pbcopy命令）：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> ~/.ssh</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> pbcopy &lt; id_rsa.pub</span></span><br></pre></td></tr></table></figure>
+
 <p>然后粘贴到服务器上的<code>.ssh/authorized_keys</code>文件中，在客户端就可以通过如下命令进行登录了（不用再输入密码）：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ssh user@server_domain</span></span><br></pre></td></tr></table></figure>
         </div>
