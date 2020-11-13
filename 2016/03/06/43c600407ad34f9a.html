@@ -2,23 +2,23 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
-<title>用OpenSSL颁发自签名证书 - 阿北</title>
+<title>线程间同步 - 轮流循环 - 阿北</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta name="description" content="自己生成证书可以用于构建证书颁发服务来为客户端授信，这里记录如何使用openssl生成证书并在Nginx中配置和使用。">
-<meta name="keywords" content="Linux,SSL">
+    <meta name="description" content="写程序实现: 子线程循环3次接着主线程循环5次，接着再子线程循环3次主线程循环5次，如此反复3趟。">
+<meta name="keywords" content="Java,线程,线程同步">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用OpenSSL颁发自签名证书">
-<meta property="og:url" content="https://i36.Me/2015/11/03/5ffb348b1e9344848.html">
+<meta property="og:title" content="线程间同步 - 轮流循环">
+<meta property="og:url" content="https://i36.Me/2016/03/06/43c600407ad34f9a.html">
 <meta property="og:site_name" content="阿北">
-<meta property="og:description" content="自己生成证书可以用于构建证书颁发服务来为客户端授信，这里记录如何使用openssl生成证书并在Nginx中配置和使用。">
+<meta property="og:description" content="写程序实现: 子线程循环3次接着主线程循环5次，接着再子线程循环3次主线程循环5次，如此反复3趟。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2015-11-02T16:00:00.000Z">
+<meta property="og:updated_time" content="2016-03-05T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用OpenSSL颁发自签名证书">
-<meta name="twitter:description" content="自己生成证书可以用于构建证书颁发服务来为客户端授信，这里记录如何使用openssl生成证书并在Nginx中配置和使用。">
+<meta name="twitter:title" content="线程间同步 - 轮流循环">
+<meta name="twitter:description" content="写程序实现: 子线程循环3次接着主线程循环5次，接着再子线程循环3次主线程循环5次，如此反复3趟。">
 
 
 
@@ -93,7 +93,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/logo.png" alt="用OpenSSL颁发自签名证书" height="28">
+                <img src="/images/logo.png" alt="线程间同步 - 轮流循环" height="28">
             
             </a>
         </div>
@@ -123,10 +123,6 @@
                     
                 
                 
-                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
-                    <i class="fas fa-list-ul"></i>
-                </a>
-                
                 
                 <a class="navbar-item search" title="搜索" href="javascript:;">
                     <i class="fas fa-search"></i>
@@ -144,28 +140,28 @@
     <!-- 
     <div class="card-image">
         <span  class="image is-7by1">
-            <img class="thumbnail" src="/i/t9iQ6a1R83fI7cL.png" alt="用OpenSSL颁发自签名证书">
+            <img class="thumbnail" src="/i/YuhSY3UnXVI6kB2.png" alt="线程间同步 - 轮流循环">
         </span>
     </div>
      -->
     <div class="card-content article ">
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                用OpenSSL颁发自签名证书
+                线程间同步 - 轮流循环
             
         </h1>
         
             <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
             <div class="level-left">
                 <i class="fas fa-calendar">&nbsp</i>
-                <time class="level-item has-text-grey" datetime="2015-11-02T16:00:00.000Z">2015-11-03</time>
+                <time class="level-item has-text-grey" datetime="2016-03-05T16:00:00.000Z">2016-03-06</time>
                 
                 
                 <i class="fas fa-book">&nbsp</i>
                 <span class="level-item has-text-grey">
                     
                     
-                    2 分钟 读完 (大约 302 个字)
+                    4 分钟 读完 (大约 569 个字)
                 </span>
                 
             </div>
@@ -175,13 +171,13 @@
                 
                     <i class="fas fa-folder-open">&nbsp</i>
                     <div class="level-item">
-                    <a class="has-link-grey -link" href="/categories/Linux/">Linux</a>
+                    <a class="has-link-grey -link" href="/categories/Java/">Java</a>
                     </div>
                 
                 
                     <i class="fas fa-tags">&nbsp</i>
                     <div class="level-item">
-                    <a class="has-link-grey -link" href="/tags/Linux/">Linux</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/SSL/">SSL</a>
+                    <a class="has-link-grey -link" href="/tags/Java/">Java</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/线程/">线程</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/线程同步/">线程同步</a>
                     </div>
                 
             </div>
@@ -189,28 +185,17 @@
         
         <div class="content">
              
-            <p>自己生成证书可以用于构建证书颁发服务来为客户端授信，这里记录如何使用<code>openssl</code>生成证书并在Nginx中配置和使用。</p>
+            <p>写程序实现: 子线程循环3次接着主线程循环5次，接着再子线程循环3次主线程循环5次，如此反复3趟。</p>
 <a id="more"></a>
 
-<h2 id="自签名证书"><a href="#自签名证书" class="headerlink" title="自签名证书"></a>自签名证书</h2><p>生成一个RSA私钥 ：</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl genrsa -des3 -out fvpnd.key 1024</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">package</span> any;</span><br><span class="line"></span><br><span class="line"><span class="hljs-comment">/**</span></span><br><span class="line"><span class="hljs-comment"> * 编写程序实现: 子线程循环3次接着主线程循环5次,接着再子线程循环3次主线程循环5次,</span></span><br><span class="line"><span class="hljs-comment"> * 如此反复循环3趟。分析：(3+5)*3=24, 子线程在loop为24时主线程在loop为21时退出.</span></span><br><span class="line"><span class="hljs-comment"> */</span></span><br><span class="line"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Looper</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-keyword">int</span> turnsCounter = <span class="hljs-number">0</span>;  <span class="hljs-comment">// 线程自己的连续循环次数</span></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-keyword">int</span> loopsCounter = <span class="hljs-number">0</span>;  <span class="hljs-comment">// 总循环次数</span></span><br><span class="line">    <span class="hljs-comment">// firstRunFlag, 以true代表第一个执行循环的线程, false代表第二个执行循环的线程</span></span><br><span class="line">    <span class="hljs-keyword">private</span> <span class="hljs-keyword">volatile</span> <span class="hljs-keyword">boolean</span> frf;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Looper</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> frf)</span></span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.frf = frf;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-meta">@Override</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">try</span> &#123;</span><br><span class="line">            loop(<span class="hljs-keyword">false</span>); <span class="hljs-comment">// 从子线程执行</span></span><br><span class="line">        &#125; <span class="hljs-keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="hljs-string">"Sub thread finished."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-comment">// 定义一个循环(里面的while)</span></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">loop</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> isMainThread)</span> <span class="hljs-keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">while</span> (<span class="hljs-keyword">true</span>) &#123;</span><br><span class="line">            <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) &#123;</span><br><span class="line">                <span class="hljs-comment">// 在一开始就检查是否轮到自己执行循环, 轮不到就等待</span></span><br><span class="line">                waitTurns(isMainThread);</span><br><span class="line"></span><br><span class="line">                <span class="hljs-comment">// Working in loop ...</span></span><br><span class="line">                turnsCounter++;</span><br><span class="line">                System.out.println(</span><br><span class="line">                        Thread.currentThread().getName()</span><br><span class="line">                                + <span class="hljs-string">", loop turn: "</span> + (loopsCounter + <span class="hljs-number">1</span>)</span><br><span class="line">                );</span><br><span class="line"></span><br><span class="line">                <span class="hljs-comment">// 循环次数统计</span></span><br><span class="line">                loopsCounter++;</span><br><span class="line"></span><br><span class="line">                <span class="hljs-comment">// 检查是否轮换循环以及是否可以停止自己的循环</span></span><br><span class="line">                <span class="hljs-keyword">if</span> ((isMainThread &amp;&amp; turnsCounter == <span class="hljs-number">5</span>) ||</span><br><span class="line">                    (!isMainThread &amp;&amp; turnsCounter == <span class="hljs-number">3</span>)</span><br><span class="line">                )&#123;</span><br><span class="line">                    turnsCounter = <span class="hljs-number">0</span>;</span><br><span class="line">                    </span><br><span class="line">                    <span class="hljs-comment">// 注意takeTurns里面反转了frf, 所以没有抽到if之前</span></span><br><span class="line">                    <span class="hljs-keyword">if</span> ((frf &amp;&amp; loopsCounter==<span class="hljs-number">21</span>)||(!frf &amp;&amp; loopsCounter == <span class="hljs-number">24</span>))&#123;</span><br><span class="line">                        takeTurns();</span><br><span class="line">                        <span class="hljs-keyword">break</span>;</span><br><span class="line">                    &#125; <span class="hljs-keyword">else</span> &#123;</span><br><span class="line">                        takeTurns();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">waitTurns</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> t)</span> <span class="hljs-keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">while</span>(t != <span class="hljs-keyword">this</span>.frf)&#123;</span><br><span class="line">            <span class="hljs-keyword">this</span>.wait();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">takeTurns</span><span class="hljs-params">()</span> </span>&#123;</span><br><span class="line">        <span class="hljs-keyword">this</span>.frf = !<span class="hljs-keyword">this</span>.frf;</span><br><span class="line">        <span class="hljs-keyword">this</span>.notify();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Main</span> </span>&#123;</span><br><span class="line">    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Looper looper = <span class="hljs-keyword">new</span> Looper(<span class="hljs-keyword">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="hljs-keyword">new</span> Thread(looper).start();    <span class="hljs-comment">// 先启动子线程</span></span><br><span class="line">        looper.loop(<span class="hljs-keyword">true</span>); <span class="hljs-comment">// 主线程开始进入循环</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="hljs-string">"Main thread finished."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>拷贝一个不需要输入密码的密钥文件</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl rsa -<span class="hljs-keyword">in</span> fvpnd.key -out fvpnd_nopass.key</span></span><br></pre></td></tr></table></figure>
-
-<p>生成一个证书请求</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl req -new -key fvpnd.key -out fvpnd.csr</span></span><br></pre></td></tr></table></figure>
-
-<p>签发证书，有效期365天</p>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> openssl x509 -req -days 365 -<span class="hljs-keyword">in</span> fvpnd.csr -signkey fvpnd.key -out fvpnd.crt</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Nginx配置和使用"><a href="#Nginx配置和使用" class="headerlink" title="Nginx配置和使用"></a>Nginx配置和使用</h2><p>将方才生成的证书拷贝到<code>/etc/nginx/ssl/</code>；安装好Nginx之后修改<code>/usr/local/nginx</code>下的nginx.conf，注释掉<code>server</code>这一节，加入一句指令来另外指定各个站点的配置文件路径：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#gzip  on;</span><br><span class="line">include /usr/local/nginx/conf/vhosts/*.conf;</span><br></pre></td></tr></table></figure>
-
-<p>新建 <code>/usr/local/nginx/conf/vhosts</code> 目录，新建<code>fvpnd.conf</code>文件，内容：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># HTTPS server</span><br><span class="line">server &#123;</span><br><span class="line">    #listen      80;</span><br><span class="line">    listen       443 ssl;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    server_name  127.0.0.1;</span><br><span class="line"></span><br><span class="line">    ssl_certificate     /etc/nginx/ssl/fvpnd.crt;</span><br><span class="line">    ssl_certificate_key /etc/nginx/ssl/fvpnd_nopass.key;</span><br><span class="line">    root   /var/app/nginx/vhost/fvpnd;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        # for uWSGI</span><br><span class="line">        uwsgi_pass 127.0.0.1:53020;</span><br><span class="line">        include uwsgi_params;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="免费证书"><a href="#免费证书" class="headerlink" title="免费证书"></a>免费证书</h2><p>如<a href="http://www.startssl.com/" target="_blank" rel="noopener">StartSSL</a>，但证书有效期只有1年。</p>
+<p><strong>注：</strong>网上有些实现很复杂，写了上百行代码，而且是各自代码循环，并不是同一个Loop里面交替循环；另外没搞清楚<strong>子线程</strong>的概念，完全是两个并行线程，都是主线程的子线程，共三个线程，是不对的。</p>
+<p>输出：</p>
+<blockquote>
+<p>/Library/Java/JavaVirtualMachines/jdk-14.0.1.jdk/Contents/Home/bin/java ……<br>main, loop turn: 1<br>main, loop turn: 2<br>main, loop turn: 3<br>main, loop turn: 4<br>main, loop turn: 5<br>Thread-0, loop turn: 6<br>Thread-0, loop turn: 7<br>Thread-0, loop turn: 8<br>main, loop turn: 9<br>main, loop turn: 10<br>main, loop turn: 11<br>main, loop turn: 12<br>main, loop turn: 13<br>Thread-0, loop turn: 14<br>Thread-0, loop turn: 15<br>Thread-0, loop turn: 16<br>main, loop turn: 17<br>main, loop turn: 18<br>main, loop turn: 19<br>main, loop turn: 20<br>main, loop turn: 21<br>Main thread finished.<br>Thread-0, loop turn: 22<br>Thread-0, loop turn: 23<br>Thread-0, loop turn: 24<br>Sub thread finished.</p>
+<p>Process finished with exit code 0</p>
+</blockquote>
 
         </div>
         
@@ -218,7 +203,7 @@
             <div class="level-start">
                 <div class="level-item">
                     <span class="is-size-6 has-text-grey has-mr-7">#</span>
-                    <a class="has-link-grey -link" href="/tags/Linux/">Linux</a>, <a class="has-link-grey -link" href="/tags/SSL/">SSL</a>
+                    <a class="has-link-grey -link" href="/tags/Java/">Java</a>, <a class="has-link-grey -link" href="/tags/线程/">线程</a>, <a class="has-link-grey -link" href="/tags/线程同步/">线程同步</a>
                 </div>
             </div>
         </div>
@@ -279,16 +264,16 @@
     <div class="level post-navigation is-flex-wrap is-mobile">
         
         <div class="level-start">
-            <a class="level level-item has-link-grey  article-nav-prev" href="/2015/11/03/1c2df78899b349c5b.html">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2016/05/01/4e7557d65574406c.html">
                 <i class="level-item fas fa-chevron-left"></i>
-                <span class="level-item">开启RSA认证使用SSH免密登录</span>
+                <span class="level-item">Java8 ArrayList&lt;E&gt;源码解读</span>
             </a>
         </div>
         
         
         <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2015/11/02/6420f8324eea4d218.html">
-                <span class="level-item">Linux设置和使用本地源</span>
+            <a class="level level-item has-link-grey  article-nav-next" href="/2016/01/12/7ee4c380575e4507a.html">
+                <span class="level-item">使用Nginx/uWSGI部署Django项目</span>
                 <i class="level-item fas fa-chevron-right"></i>
             </a>
         </div>
@@ -304,8 +289,8 @@
         
 <script>
     var disqus_config = function () {
-        this.page.url = 'https://i36.Me/2015/11/03/5ffb348b1e9344848.html';
-        this.page.identifier = '5ffb348b1e9344848';
+        this.page.url = 'https://i36.Me/2016/03/06/43c600407ad34f9a.html';
+        this.page.identifier = '43c600407ad34f9a';
     };
     (function() {
         var d = document, s = d.createElement('script');  
@@ -335,30 +320,6 @@
         <div class="column-right-shadow  ">
             
                 
-<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
-<div class="card widget" id="toc" style="overflow: auto;">
-    <div class="card-content">
-        <div class="menu" style="max-height: 500px; overflow: auto;">
-            <h3 class="menu-label">
-                目录
-            </h3>
-            <ul class="menu-list"><li>
-        <a href="#自签名证书">
-        <span class="has-mr-6">1</span>
-        <span>自签名证书</span>
-        </a></li><li>
-        <a href="#Nginx配置和使用">
-        <span class="has-mr-6">2</span>
-        <span>Nginx配置和使用</span>
-        </a></li><li>
-        <a href="#免费证书">
-        <span class="has-mr-6">3</span>
-        <span>免费证书</span>
-        </a></li></ul>
-        </div>
-    </div>
-</div>
-
             
                 
 <div class="card widget">
@@ -951,7 +912,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/logo.png" alt="用OpenSSL颁发自签名证书" height="28">
+                    <img src="/images/logo.png" alt="线程间同步 - 轮流循环" height="28">
                 
                 </a>
                 <p class="is-size-7" style="padding-bottom: 0.5em">

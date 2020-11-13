@@ -2,7 +2,7 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
-<title>标签: 数组 - 阿北</title>
+<title>标签: 线程 - 阿北</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
@@ -10,7 +10,7 @@
     <meta name="description" content="Just a note of mine.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="阿北">
-<meta property="og:url" content="https://i36.Me/tags/数组/index.html">
+<meta property="og:url" content="https://i36.Me/tags/线程/index.html">
 <meta property="og:site_name" content="阿北">
 <meta property="og:description" content="Just a note of mine.">
 <meta property="og:locale" content="zh-CN">
@@ -139,7 +139,7 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
         <ul>
             <li><a href="/tags">标签</a></li>
-            <li class="is-active"><a href="#" aria-current="page">数组</a></li>
+            <li class="is-active"><a href="#" aria-current="page">线程</a></li>
         </ul>
         </nav>
     </div>
@@ -148,29 +148,29 @@
     <div class="card">
     <!-- 
     <div class="card-image">
-        <a href="/2016/05/01/4e7557d65574406c.html" class="image is-7by1">
-            <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+        <a href="/2016/03/06/43c600407ad34f9a.html" class="image is-7by1">
+            <img class="thumbnail" src="/i/YuhSY3UnXVI6kB2.png" alt="线程间同步 - 轮流循环">
         </a>
     </div>
      -->
     <div class="card-content article ">
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                <a class="has-link-black-ter" href="/2016/05/01/4e7557d65574406c.html">Java8 ArrayList&lt;E&gt;源码解读</a>
+                <a class="has-link-black-ter" href="/2016/03/06/43c600407ad34f9a.html">线程间同步 - 轮流循环</a>
             
         </h1>
         
             <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
             <div class="level-left">
                 <i class="fas fa-calendar">&nbsp</i>
-                <time class="level-item has-text-grey" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time>
+                <time class="level-item has-text-grey" datetime="2016-03-05T16:00:00.000Z">2016-03-06</time>
                 
                 
                 <i class="fas fa-book">&nbsp</i>
                 <span class="level-item has-text-grey">
                     
                     
-                    12 分钟 读完 (大约 1816 个字)
+                    4 分钟 读完 (大约 569 个字)
                 </span>
                 
             </div>
@@ -186,7 +186,7 @@
                 
                     <i class="fas fa-tags">&nbsp</i>
                     <div class="level-item">
-                    <a class="has-link-grey -link" href="/tags/ArrayList/">ArrayList</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/Java/">Java</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/数组/">数组</a>
+                    <a class="has-link-grey -link" href="/tags/Java/">Java</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/线程/">线程</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/线程同步/">线程同步</a>
                     </div>
                 
             </div>
@@ -194,15 +194,14 @@
         
         <div class="content">
              
-            <p>ArrayList&lt;E&gt;是能够自动扩容版本的数组实现，它继承了​AbstractList&lt;E&gt;​抽象类，实现了​List&lt;E&gt;, RandomAccess, Cloneable, Serializable​等几个接口：</p>
-<figure class="highlight java hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ArrayList</span>&lt;<span class="hljs-title">E</span>&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractList</span>&lt;<span class="hljs-title">E</span>&gt;</span></span><br><span class="line"><span class="hljs-class">        <span class="hljs-keyword">implements</span> <span class="hljs-title">List</span>&lt;<span class="hljs-title">E</span>&gt;, <span class="hljs-title">RandomAccess</span>, <span class="hljs-title">Cloneable</span>, <span class="hljs-title">java</span>.<span class="hljs-title">io</span>.<span class="hljs-title">Serializable</span></span></span><br></pre></td></tr></table></figure>
+            <p>写程序实现: 子线程循环3次接着主线程循环5次，接着再子线程循环3次主线程循环5次，如此反复3趟。</p>
         </div>
         
         
         <div class="level is-mobile">
             <div class="level-start">
                 <div class="level-item">
-                <a class="button is-size-7 is-light" href="/2016/05/01/4e7557d65574406c.html#more">阅读更多</a>
+                <a class="button is-size-7 is-light" href="/2016/03/06/43c600407ad34f9a.html#more">阅读更多</a>
                 </div>
             </div>
         </div>
