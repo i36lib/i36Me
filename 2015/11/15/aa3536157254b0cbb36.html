@@ -193,53 +193,37 @@
         <div class="content">
              
             <p>Ubuntu Desktop默认是带XWindow图形界面程序的，而Ubuntu Server默认不带，需要自己安装，我是在安装了Ubuntu Server 14.04LTS之后再安装的XWindow，桌面环境使用的是GNome，你也可以使用KDE等其他的。<a id="more"></a>比较搞的是这边不是使用有线网络，全部使用WIFI，而我的PC装的是Ubuntu Server，所以先要设置一下使用WIFI上网，然后安装XWindow和GNome，最后设置一下默认启用UI模式还是TEXT字符模式，安装桌面环境会自带安装上Firfox浏览器，由于系统是英文版，所以出现了网页中文乱码问题，安装一个中文字体即可。</p>
-<p><img src="/i/vYP51Kw9Cm3jGcZ.jpg"></p>
+<p><img src="/i/vYP51Kw9Cm3jGcZ.jpg" alt></p>
 <h2 id="设置Ubuntu使用WIFI上网"><a href="#设置Ubuntu使用WIFI上网" class="headerlink" title="设置Ubuntu使用WIFI上网"></a>设置Ubuntu使用WIFI上网</h2><p>需要安装wpasupplicant，但默认地Ubuntu Server已经自带了该软件，所以直接使用（不然又上不了网，可真的要蛋疼了）。不过还是提一下安装命令：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install wpasupplicant</span></span><br></pre></td></tr></table></figure>
-
 <p>将WIFI的SSID（就是你在Windows或者手机下点击无线所看到的那个WIFI名称）和密码写入配置文件，配置文件名和路径自己任意取：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo wpa_passphrase WIFI_SSID WIFI_PASWD &gt; /etc/wifi_SSID.conf</span></span><br></pre></td></tr></table></figure>
-
 <p>编辑/etc/network/interfaces配置文件将WIFI无线配置信息写入其中：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo vim /etc/network/interfaces</span></span><br><span class="line">auto wlan0</span><br><span class="line">iface wlan0 inet dhcp</span><br><span class="line">wpa-conf /etc/wifi_SSID.conf</span><br></pre></td></tr></table></figure>
-
 <p>重启使配置生效（不过应该可以有其他方式使其生效而不用重启~ 如果你知道可以留言告知一下）：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo reboot</span></span><br></pre></td></tr></table></figure>
-
 <h2 id="安装XWindow和Gnome桌面环境"><a href="#安装XWindow和Gnome桌面环境" class="headerlink" title="安装XWindow和Gnome桌面环境"></a>安装XWindow和Gnome桌面环境</h2><p>安装XWindow：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install xserver-xorg</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install x-window-system-core</span></span><br></pre></td></tr></table></figure>
-
 <p>使XWindow生效：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo dpkg-reconfigure xserver-xorg</span></span><br></pre></td></tr></table></figure>
-
 <p>安装GNome桌面环境：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install gnome-core gdm</span></span><br></pre></td></tr></table></figure>
-
 <p>安装屏保程序：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install xscreensaver</span></span><br></pre></td></tr></table></figure>
-
 <p>安装相关显示字体：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install ttf-arphic*</span></span><br></pre></td></tr></table></figure>
-
 <h2 id="解决Firfox中文乱码问题"><a href="#解决Firfox中文乱码问题" class="headerlink" title="解决Firfox中文乱码问题"></a>解决Firfox中文乱码问题</h2><p><img src="/i/NSKVdPlOYwesmUI.png" alt="Firfox页面中文乱码"></p>
 <p><strong>原因：</strong>  缺少显示中文的字体（参考：<a href="http://askubuntu.com/questions/189945/install-chineseand-other-utf-8-fonts-for-xvfb" target="_blank" rel="noopener">AskUbuntu | Install chinese font</a>），下载字体xfonts-wqy来安装就好了，命令如下：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install xfonts-wqy</span></span><br></pre></td></tr></table></figure>
-
 <p>解决了Firfox的乱码之后又出现了新的问题，那就是Firfox经常崩溃，于是安装了Google Chrome，问题是Chrome也是乱码，执行下面的命令安装wqy中文字体，搞定：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install ttf-wqy-*</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install fonts-wqy-*</span></span><br></pre></td></tr></table></figure>
-
 <p>重装过一次系统，依据以前的经验，这次在安装gnome桌面系统之后我直接将字体给安装上了，后来再也没发现firfox有乱码：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install ttf-arphic*</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install ttf-wqy-*</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install xfonts-wqy</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo apt-get install fonts-wqy-*</span></span><br></pre></td></tr></table></figure>
-
 <h2 id="设置默认进入UI桌面环境"><a href="#设置默认进入UI桌面环境" class="headerlink" title="设置默认进入UI桌面环境"></a>设置默认进入UI桌面环境</h2><figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> cat /etc/X11/default-display-manager</span></span><br></pre></td></tr></table></figure>
-
 <p>查看输出值，如果为/usr/sbin/gdm或类似则为默认进入图形界面，这里安装完成桌面环境之后其值就默认修改成了/usr/sbin/gdm；如果为false则默认进入TEXT字符命令界面。也可以在进入字符命令界面之后使用如下命令来启动桌面环境：</p>
 <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> startx</span></span><br></pre></td></tr></table></figure>
-
 <p>如果是从第一个TTY如TTY1，则执行之后对应在Ctrl+Alt+F7桌面环境，如果你再从第二个TTY启动UI环境则对应在Ctrl+Alt+F8，依次类推。</p>
-<h2 id="附加：切换各个TTY"><a href="#附加：切换各个TTY" class="headerlink" title="附加：切换各个TTY"></a>附加：切换各个TTY</h2><p>切换各个TTY的命令为：</p>
-<figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TTY1：Ctrl+Alt+F1</span><br><span class="line">TTY2：Ctrl+Alt+F2</span><br><span class="line">TTY3：Ctrl+Alt+F3</span><br><span class="line">TTY4：Ctrl+Alt+F4</span><br><span class="line">TTY5：Ctrl+Alt+F5</span><br><span class="line">TTY6：Ctrl+Alt+F6</span><br></pre></td></tr></table></figure>
-
+<h2 id="附加：切换各个TTY"><a href="#附加：切换各个TTY" class="headerlink" title="附加：切换各个TTY"></a>附加：切换各个TTY</h2><p>切换各个TTY的命令为：<br><figure class="highlight plain hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TTY1：Ctrl+Alt+F1</span><br><span class="line">TTY2：Ctrl+Alt+F2</span><br><span class="line">TTY3：Ctrl+Alt+F3</span><br><span class="line">TTY4：Ctrl+Alt+F4</span><br><span class="line">TTY5：Ctrl+Alt+F5</span><br><span class="line">TTY6：Ctrl+Alt+F6</span><br></pre></td></tr></table></figure></p>
 
         </div>
         
