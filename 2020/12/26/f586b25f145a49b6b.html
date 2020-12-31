@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+<title>Kubernetes集群搭建 - 阿北</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+    <meta name="keywords" content="Kubernetes,k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes集群搭建">
+<meta property="og:url" content="https://i36.Me/2020/12/26/f586b25f145a49b6b.html">
+<meta property="og:site_name" content="阿北">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://i36.me/i/YGzT3kg9luovyQQ.jpeg">
+<meta property="og:image" content="https://i36.me/i/Nsnyyz8TtQ0edhQ.png">
+<meta property="og:updated_time" content="2020-12-25T16:00:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kubernetes集群搭建">
+<meta name="twitter:image" content="https://i36.me/i/YGzT3kg9luovyQQ.jpeg">
+
+
+
+
+
+<link rel="icon" href="/images/logo.png">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-dark.css">
+
+
+    
+    
+    
+    <style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+    
+
+    
+    
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+    
+
+    
+    
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+
+    
+    
+    
+    
+
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+
+    
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-24320647-1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-24320647-1');
+</script>
+
+
+    
+    
+    
+    
+
+    
+    
+<link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+
+    
+
+
+<link rel="stylesheet" href="/css/style.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+<body class="is-2-column">
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/logo.png" alt="Kubernetes集群搭建" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item" href="/">主页</a>
+                
+                <a class="navbar-item" href="/categories">分类</a>
+                
+                <a class="navbar-item" href="/archives">归档</a>
+                
+                <a class="navbar-item" href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    
+                    <a class="navbar-item" target="_blank" title="Download on GitHub" href="http://github.com/i36lib">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-9-widescreen has-order-2 column-main"><div class="card">
+    <!-- 
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/i/XOohUot8Xp5MJge.jpg" alt="Kubernetes集群搭建">
+        </span>
+    </div>
+     -->
+    <div class="card-content article ">
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                Kubernetes集群搭建
+            
+        </h1>
+        
+            <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
+            <div class="level-left">
+                <i class="fas fa-calendar">&nbsp</i>
+                <time class="level-item has-text-grey" datetime="2020-12-25T16:00:00.000Z">2020-12-26</time>
+                
+                
+                <i class="fas fa-book">&nbsp</i>
+                <span class="level-item has-text-grey">
+                    
+                    
+                    28 分钟 读完 (大约 4210 个字)
+                </span>
+                
+            </div>
+        </div>
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                
+                    <i class="fas fa-folder-open">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/Kubernetes/">Kubernetes</a>
+                    </div>
+                
+                
+                    <i class="fas fa-tags">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/tags/Kubernetes/">Kubernetes</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/k8s/">k8s</a>
+                    </div>
+                
+            </div>
+        </div>
+        
+        <div class="content">
+             
+            <p><img src="/i/YGzT3kg9luovyQQ.jpeg"></p>
+<a id="more"></a>
+
+<h2 id="先期工作"><a href="#先期工作" class="headerlink" title="先期工作"></a>先期工作</h2><h4 id="机器集群实现方案"><a href="#机器集群实现方案" class="headerlink" title="机器集群实现方案"></a>机器集群实现方案</h4><p>手头并没有现成的机器群，但好在有一台还算高配的MacBook Pro，如此的话可以在其上借助于虚拟机构建出一个5台机器的集群，在此基础上来搭建Kubernetes集群：</p>
+<figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MacBook Pro (13-inch, 2017, Two Thunderbolt 3 ports)</span><br><span class="line">Processor: 2.5 GHz Dual-Core Intel Core i7</span><br><span class="line">Memory: 16 GB 2133 MHz LPDDR3</span><br><span class="line">Graphics: Intel Iris Plus Graphics 640 1536 MB</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>选件</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>虚拟机</td>
+<td><a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">VirtualBox</a></td>
+<td>主要考虑Oracle Virtual Box和VMware Fusion，Vbox提供丰富<br>的命令工具来操作虚拟机，这使得我们能够方便地基于此来编写<br>一些控制脚本方便地控制集群机器，所以虚拟机选择VBox</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td><a href="http://mirrors.aliyun.com/centos/7.9.2009/isos/x86_64/" target="_blank" rel="noopener">CentOS 7.9</a></td>
+<td>主要考虑的是主流的RHEL、CentOS、Fedora、Ubuntu等等，<br>RHEL/CentOS/Fedora同出一脉，Fedora作为试验先行版自然是不考虑<br>了，CentOS比较主流，是首选，版本的话也是选择目前的主流版本7</td>
+</tr>
+</tbody></table>
+<h4 id="Kubernetes集群设计"><a href="#Kubernetes集群设计" class="headerlink" title="Kubernetes集群设计"></a>Kubernetes集群设计</h4><p>计划使用6台虚拟机来构建集群，集群机器的IP、Hostname等的设计如下：</p>
+<table>
+<thead>
+<tr>
+<th>Hostname</th>
+<th>IP Address</th>
+<th>备注说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>worker-st.xcluster.io</td>
+<td>192.168.99.100</td>
+<td>不作为K8s集群的一部分，而是安装<br>jenkins/gitlab….等CICD Devops工具</td>
+</tr>
+<tr>
+<td>worker-01.xcluster.io</td>
+<td>192.168.99.101</td>
+<td>作为K8s集群的master节点，负责管理其他节点</td>
+</tr>
+<tr>
+<td>worker-02.xcluster.io</td>
+<td>192.168.99.102</td>
+<td>作为K8s集群的1号Node机器，负责跑Pods</td>
+</tr>
+<tr>
+<td>worker-03.xcluster.io</td>
+<td>192.168.99.103</td>
+<td>作为K8s集群的2号Node机器，负责跑Pods</td>
+</tr>
+<tr>
+<td>worker-04.xcluster.io</td>
+<td>192.168.99.104</td>
+<td>作为K8s集群的3号Node机器，负责跑Pods</td>
+</tr>
+<tr>
+<td>worker-05.xcluster.io</td>
+<td>192.168.99.105</td>
+<td>作为K8s集群的4号Node机器，负责跑Pods</td>
+</tr>
+</tbody></table>
+<h2 id="创建服务器群"><a href="#创建服务器群" class="headerlink" title="创建服务器群"></a>创建服务器群</h2><h4 id="创建CentOS7样机"><a href="#创建CentOS7样机" class="headerlink" title="创建CentOS7样机"></a>创建CentOS7样机</h4><p>这一步的目的是创建出一台基础的CentOS7虚拟机并做好基础设置，然后基于该机器再克隆出其他机器，首先是创建第一台（worker-st.xcluster.io）并完成基本配置：</p>
+<ul>
+<li><p>下载安装VBox：<a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener">https://www.virtualbox.org/wiki/Downloads</a></p>
+</li>
+<li><p>下载CentOS7.9镜像：<a href="http://mirrors.aliyun.com/centos/7.9.2009/isos/x86_64/" target="_blank" rel="noopener">http://mirrors.aliyun.com/centos/7.9.2009/isos/x86_64/</a></p>
+</li>
+<li><p>安装好VBox后创建一个虚拟机，配置如下：</p>
+<ul>
+<li><p><strong>名称：</strong>Worker-st、<strong>类型：</strong>Linux、<strong>版本：</strong>Red Hat (64bit)</p>
+</li>
+<li><p><strong>内存：</strong>4096MB、<strong>CPU：</strong>双核、<strong>显存：</strong>64MB、<strong>显示器：</strong>2个、<strong>显示器显示比例：</strong>200%</p>
+</li>
+<li><p><strong>磁盘类型：</strong>Normal (VMDK)、<strong>磁盘容量：</strong>300.00 GB(单个文件、动态增长)</p>
+</li>
+<li><p><strong>网卡1：</strong>NAT、<strong>适配器类型：</strong>Paravirtualized Network (virtio-net) —— <u>用以跟MBP共享网络</u></p>
+</li>
+<li><p><strong>网卡2：</strong>Host-only Adapter — — <u>用以设置静态IP（192.168.99.XX）</u></p>
+<p>  两张网卡的<strong>Promiscuous Mode</strong>均为默认值：Deny</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>在虚拟机磁盘中选择下载好的CentOS 7.9的ISO镜像，然后启动虚拟机进行系统安装，安装期间系统设置如下：</p>
+<ul>
+<li><strong>语言：</strong>English (United States)、<strong>键盘：</strong>English (United States)</li>
+<li><strong>磁盘分区：</strong>自动、<strong>Root密码</strong>：123456abc、创建<strong>管理账户：</strong>fury，<strong>密码</strong>为：123456abc</li>
+</ul>
+<p>安装完成后以root登录，然后设置静态IP，这样可以直接从MBP的Terminal远程登录进机器，操作更方便一些（直接从虚拟机的黑框框登录的话，由于显示比例的问题，操作不是很方便）：</p>
+<ul>
+<li><p>安装net-tools(包含ifconfig)：<code>$ sudo yum install net-tools</code></p>
+</li>
+<li><p>启用SSH登录：添加MBP的公钥到<code>~/.ssh/authorized_keys</code>，重启SSHD，修改<code>.ssh</code>目录权限</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo service sshd restart</span><br><span class="line"><span class="hljs-meta">$</span> sudo chmod 700 ~/.ssh</span><br><span class="line"><span class="hljs-meta">$</span> sudo chmod 600 ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置静态IP</p>
+<ul>
+<li><p>设置DNS <code>$ sudo vi /etc/resolv.conf</code>，加入<code>nameserver 114.114.114.114</code></p>
+</li>
+<li><p>查看现有网卡：<code>$ ifconfig -a</code></p>
+</li>
+<li><p>配置两张网卡（路径<code>/etc/sysconfig/network-scripts/</code>）：</p>
+<ul>
+<li><p>备份<strong>enp0s3</strong>配置文件，并拷贝为ifcfg-eth0，内部改<strong>name</strong>和device为<strong>eth0</strong>（如果文件内没有<strong>HWADDR</strong>字段则加上，值为虚拟机网卡设置那里看到的MAC地址<code>HWADDR=00:0C:29:7C:00:34</code>），修改<code>ONBOOT=yes</code> 以自启动网卡</p>
+</li>
+<li><p>创建<strong>ifcfg-eth1</strong>文件，设置内容如下（配置第二张网卡为静态IP）：</p>
+  <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-attr">DEVICE</span>=eth1</span><br><span class="line"><span class="hljs-attr">HWADDR</span>=<span class="hljs-number">00</span>:<span class="hljs-number">0</span>C:<span class="hljs-number">29</span>:<span class="hljs-number">84</span>:<span class="hljs-number">35</span>:<span class="hljs-number">09</span></span><br><span class="line"><span class="hljs-attr">ONBOOT</span>=<span class="hljs-literal">yes</span></span><br><span class="line"><span class="hljs-attr">BOOTPROTO</span>=static</span><br><span class="line"><span class="hljs-attr">IPADDR</span>=<span class="hljs-number">192.168</span>.<span class="hljs-number">99.100</span></span><br><span class="line"><span class="hljs-attr">NETMASK</span>=<span class="hljs-number">255.255</span>.<span class="hljs-number">255.0</span></span><br><span class="line"><span class="hljs-attr">NAME</span>=eth1</span><br></pre></td></tr></table></figure>
+
+<p>  HWADDR为虚拟机上第二张网卡的MAC地址</p>
+<p>然后重启：<code>$ sudo service network restart</code>，可能会发现提示错误<br><img src="/i/Nsnyyz8TtQ0edhQ.png"></p>
+<p>查看<code>$ sudo journalctl -xe</code>或查看错误日志看看是哪个网卡没起来：<code>$ cat /var/log/messages | grep network</code>，发现说eth0没起来，它的UUID和eth1冲突了，把eth0的UUID删掉（确认HWADDR是第一张网卡的MAC地址），然后重启即可（UUID会自动加上）。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>重启系统，这样以后就可以通过MBP的Terminal如下命令开启、登录、关闭虚拟机（XXX为虚拟机名称）：</p>
+<ol>
+<li>开启虚拟机：<code>$ VBoxManage startvm XXX -type vrdp</code></li>
+<li>登录虚拟机：<code>$ ssh root@192.168.99.100</code></li>
+<li>关闭虚拟机：<code>$ VBoxManage controlvm XXX poweroff</code></li>
+</ol>
+<p>其他的基础设置：</p>
+<ul>
+<li><p>安装wget下载工具：<code>$ sudo yum install wget</code></p>
+</li>
+<li><p>修改hostname：<code>$ sudo vi /etc/hostname</code>，设置为<code>worker-st.xcluster.io</code></p>
+</li>
+<li><p>修改shell显示名：<code>$ sudo vi ~/.bashrc</code>添加<code>export PS1=&#39;[\u@Worker-st \W]\$ &#39;</code></p>
+</li>
+<li><p>使用阿里云的Repo（备份原<code>/etc/yum.repos.d/</code>下的repo文件然后清空该文件夹）：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> cd /etc/yum.repos.d/</span><br><span class="line"><span class="hljs-meta">$</span> wget http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"><span class="hljs-meta">$</span> wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"><span class="hljs-meta">$</span> wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span><br><span class="line"><span class="hljs-meta">$</span> yum clean all &amp;&amp; yum makecache</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装Vim8.x：</p>
+<ul>
+<li><p>安装所需的基础库：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> yum install -y gcc gcc-c++ ruby ruby-devel lua lua-devel ctags git python python-devel tcl-devel ncurses-devel perl perl-devel perl-ExtUtils-ParseXS perl-ExtUtils-CBuilder perl-ExtUtils-Embed</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载Vim-v8.1：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> wget https://github.com/vim/vim/archive/v8.1.1312.tar.gz</span><br><span class="line"><span class="hljs-meta">$</span> tar -zxvf v8.1.1312.tar.gz</span><br><span class="line"><span class="hljs-meta">$</span> cd vim-8.1.1312</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>开始安装：<code>--with-python-config-dir</code>这项要看自己的实际路径，是python-devel带的目录</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> ./configure --with-features=huge \</span><br><span class="line">            --enable-multibyte \</span><br><span class="line">            --enable-rubyinterp=yes \</span><br><span class="line">            --enable-pythoninterp=yes \</span><br><span class="line">            --with-python-config-dir=/usr/lib64/python2.7/config \</span><br><span class="line">            --enable-perlinterp=yes \</span><br><span class="line">            --enable-luainterp=yes \</span><br><span class="line">            --enable-cscope \</span><br><span class="line">            --prefix=/usr/local</span><br><span class="line"><span class="hljs-meta">$</span> make -j4 VIMRUNTIMEDIR=/usr/local/share/vim/vim81 all</span><br><span class="line"><span class="hljs-meta">$</span> sudo sudo make -j4 install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更改系统默认编辑器并将vi指向vim</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/vim 1</span><br><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --set editor /usr/local/bin/vim</span><br><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/vim 1</span><br><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --set vi /usr/local/bin/vim</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>安装其他基础软件：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum install unzip zip</span><br><span class="line"><span class="hljs-meta">$</span> sudo yum install gcc gcc-c++ glibc</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>至此，我们创建好了一台基础的CentOS7虚拟机，这台机器将作为集群设计里面的第一台<strong>worker-st.xcluster.io</strong>。</p>
+<h4 id="创建Kubernetes样机"><a href="#创建Kubernetes样机" class="headerlink" title="创建Kubernetes样机"></a>创建Kubernetes样机</h4><p>这一步在创建好的CentOS7虚拟机样机的基础上安装Kubernetes集群都需要安装的一些组件。从上一步创建好的虚拟机克隆出一台新的虚拟机，克隆时名称改为<code>Worker-01</code>并选择完全克隆方式。克隆完成后在虚拟机的网卡设置当中刷新两张网卡的MAC地址，然后启动虚拟机，进入虚拟机后做如下修改：</p>
+<p><strong>注意：</strong>后面基于这台机器克隆其他k8s集群机器时也要做如下这些方面对应的修改</p>
+<ul>
+<li>修改eth0和eth1的MAC地址和eth1的IP地址（路径<code>/etc/sysconfig/network-scripts/</code>）<ul>
+<li>eth0和eth1的MAC地址（HWADDR）可以从虚拟网卡设置界面获得</li>
+<li>IP地址按照一开始的设计，我们把IP改为<code>192.168.99.101</code></li>
+</ul>
+</li>
+<li>修改hostname为<code>worker-01.xcluster.io</code></li>
+<li>修改shell显示名：<code>$ vi ~/.bashrc</code>添加<code>export PS1=&#39;[\u@Worker-01 \W]\$ &#39;</code></li>
+</ul>
+<p>其他为Kubernetes进行的配置：</p>
+<ul>
+<li><p>关闭防火墙：<code>$ sudo systemctl stop firewalld &amp;&amp; systemctl disable firewalld</code></p>
+</li>
+<li><p>永久关闭selinux：<code>$ sudo vim /etc/selinux/config</code>修改：</p>
+  <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-comment">#SELINUX=enforcing</span></span><br><span class="line"><span class="hljs-attr">SELINUX</span>=disabled</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>永久关闭swap：<code>$ sudo vim /etc/fstab</code> 注释最后一行（swap）</p>
+</li>
+<li><p>配置yum源(自带的kubernetes版本可能比较低)：安装方式（生产，kubeadmin）</p>
+<ul>
+<li><p><code>$ cd /etc/yum.repos.d/</code></p>
+</li>
+<li><p><code>$ vim kubernetes.repo</code></p>
+  <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-section">[kubernetes]</span></span><br><span class="line"><span class="hljs-attr">name</span>=Kubernetes</span><br><span class="line"><span class="hljs-attr">baseurl</span>=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x<span class="hljs-number">86_64</span>/</span><br><span class="line"><span class="hljs-attr">enabled</span>=<span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-attr">gpgcheck</span>=<span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-attr">repo_gpgcheck</span>=<span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-attr">gpgkey</span>=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>$ sudo yum clean all &amp;&amp; yum makecache</code></p>
+</li>
+</ul>
+</li>
+<li><p>安装docker</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line"><span class="hljs-meta">$</span> sudo yum -y install docker</span><br></pre></td></tr></table></figure>
+
+<p>  由于内核可能不支持 <strong>overlay2</strong>所以需要升级内核或者禁用overlay2(选择禁用，安装完docker可以启动docker测试下是否支持，启动docker不报错的可以忽略这一步)：<code>$ sudo vim /etc/sysconfig/docker</code>修改<code>--selinux-enabled=false</code> </p>
+</li>
+<li><p>自启动docker服务：<code>$ sudo systemctl start docker &amp;&amp; systemctl enable docker</code></p>
+</li>
+<li><p>设置服务器时区：<code>$ sudo timedatectl set-timezone Asia/Shanghai</code></p>
+</li>
+<li><p>设置k8s相关参数：</p>
+<ul>
+<li><p><code>$ sudo vim /etc/sysctl.d/k8s.conf</code></p>
+  <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-attr">net.bridge.bridge-nf-call-ip6tables</span> = <span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-attr">net.bridge.bridge-nf-call-iptables</span> = <span class="hljs-number">1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>让其生效</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo sysctl -p</span><br><span class="line"><span class="hljs-meta">$</span> sudo echo "1" &gt; /proc/sys/net/ipv4/ip_forward</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>安装k8s相关安装包，使用 <code>$ sudo yum list kube*</code>  来查看当前yum源支持的最新版本（这里是1.20.1-0）</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum -y install kubeadm-1.20.1-0 kubelet-1.20.1-0 kubectl-1.20.1-0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>自启动服务：<code>$ sudo systemctl restart kubelet &amp;&amp; systemctl enable kubelet</code></p>
+</li>
+</ul>
+<p>到这里完成了第二台样机设置，这台机器将作为k8s集群的master机器（<code>worker-01.xcluster.io</code>），其他机器将以这台为样本进行克隆配置。</p>
+<h4 id="克隆其他K8s集群机器"><a href="#克隆其他K8s集群机器" class="headerlink" title="克隆其他K8s集群机器"></a>克隆其他K8s集群机器</h4><p>基于第二台样机（<code>worker-01.xcluster.io</code>），克隆出其他的4台机器，注意按上面的提示对应修改MAC地址、IP、hostname、shell显示名等相关信息：</p>
+<table>
+<thead>
+<tr>
+<th>Hostname</th>
+<th>IP Address</th>
+<th>备注说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>worker-02.xcluster.io</td>
+<td>192.168.99.102</td>
+<td>集群1号Node机器</td>
+</tr>
+<tr>
+<td>worker-03.xcluster.io</td>
+<td>192.168.99.103</td>
+<td>集群2号Node机器</td>
+</tr>
+<tr>
+<td>worker-04.xcluster.io</td>
+<td>192.168.99.104</td>
+<td>集群3号Node机器</td>
+</tr>
+<tr>
+<td>worker-05.xcluster.io</td>
+<td>192.168.99.105</td>
+<td>集群号Node机器</td>
+</tr>
+</tbody></table>
+<h2 id="配置K8s集群"><a href="#配置K8s集群" class="headerlink" title="配置K8s集群"></a>配置K8s集群</h2><p>到这里，我们创建好了6台CentoOS服务器，第一台后面作为安装Jenkins/gitlab等工具的机器，不纳入k8s集群，后面5台都安装了k8s相关包和docker，这5台将作为我们的k8s集群机器，这些机器的配置目前是一样的，接下来对第一台机器（<code>worker-01.xcluster.io</code>）进行设置（初始化k8s集群让其成为master）。</p>
+<h4 id="初始化配置Master"><a href="#初始化配置Master" class="headerlink" title="初始化配置Master"></a>初始化配置Master</h4><p>在master机器上执行初始化操作，即<code>worker-01.xcluster.io</code>这台机；注意坑点：</p>
+<ul>
+<li>如果要用flannel:<ul>
+<li>如果想配合使用dashboard，建议<strong>直接放弃</strong>，可改用weave，详细可以见<a href="https://github.com/kubernetes/dashboard/issues/1578" target="_blank" rel="noopener">这里</a></li>
+<li>安装前,使用kubeadm init的时候，参数里记得<strong>指定service-cidr</strong>.</li>
+<li>关于flannel和weave：<a href="https://www.cnblogs.com/kevingrace/p/6859114.html" target="_blank" rel="noopener">https://www.cnblogs.com/kevingrace/p/6859114.html</a></li>
+</ul>
+</li>
+<li>如果要用weave:<ul>
+<li>安装前，使用kubeadm init的时候，参数里记得<strong>不要指定service-cidr</strong>参数，但要保留pod-network-cidr. 不然<strong>内置的DNS</strong>会出问题，这可能是系统的bug。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubeadm init \</span><br><span class="line">--apiserver-advertise-address=192.168.99.101 \ # 写masterIP地址即可</span><br><span class="line">--image-repository registry.aliyuncs.com/google_containers \</span><br><span class="line">--kubernetes-version v1.20.1 \    # 注意是v1.20.1而不是v1.20.1-0</span><br><span class="line">--service-cidr=10.2.0.0/16 \</span><br><span class="line">--pod-network-cidr=10.244.0.0/16</span><br><span class="line"></span><br><span class="line">Your Kubernetes control-plane has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br><span class="line"></span><br><span class="line">Alternatively, if you are the root user, you can run:</span><br><span class="line"></span><br><span class="line">  export KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">Then you can join any number of worker nodes by running the following on each as root:</span><br><span class="line"></span><br><span class="line">kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910 </span><br><span class="line"></span><br><span class="line">[fury@Worker-01 ~]$</span><br></pre></td></tr></table></figure>
+
+<p>可以看到初始化已经OK了，通过26行的代码可以在其他node上执行以让master发现（加入k8s集群）。</p>
+<ul>
+<li><p>安装flannel：</p>
+<p>  下载<a href="https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml%EF%BC%8C%E7%84%B6%E5%90%8E" target="_blank" rel="noopener">https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml，然后</a><br>  <code>$ sudo kubectl apply -f kube-flannel.yml</code></p>
+</li>
+</ul>
+<p>到这里master就初始化完毕了。</p>
+<h4 id="其他节点加入K8s集群"><a href="#其他节点加入K8s集群" class="headerlink" title="其他节点加入K8s集群"></a>其他节点加入K8s集群</h4><ul>
+<li><p>将node节点加入到master集群中，在需要加入k8s集群的node节点上执行该命令（上面的输出）</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910</span><br></pre></td></tr></table></figure>
+
+<p>  如果忘记kubeadm join后的参数，可用通过下面命令来获取新的：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubeadm token create --print-join-command</span><br></pre></td></tr></table></figure>
+
+<p>  在Worker-02上的操作结果：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[fury@Worker-02 ~]$ sudo kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr     --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910 </span><br><span class="line">[preflight] Running pre-flight checks</span><br><span class="line">[preflight] Reading configuration from the cluster...</span><br><span class="line">[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'</span><br><span class="line">[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"</span><br><span class="line">[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"</span><br><span class="line">[kubelet-start] Starting the kubelet</span><br><span class="line">[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...</span><br><span class="line"></span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run 'kubectl get nodes' on the control-plane to see this node join the cluster.</span><br><span class="line"></span><br><span class="line">[fury@Worker-02 ~]$</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>在其他的Worker上执行相同操作来加入集群，正常的话在master上执行``即可看到其他node的状态：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[fury@Worker-01 ~]$ sudo kubectl get nodes</span><br><span class="line">NAME                    STATUS   ROLES                  AGE     VERSION</span><br><span class="line">worker-01.xcluster.io   Ready    control-plane,master   2d22h   v1.20.1</span><br><span class="line">worker-02.xcluster.io   Ready    &lt;none&gt;                 2d22h   v1.20.1</span><br><span class="line">worker-03.xcluster.io   Ready    &lt;none&gt;                 2d17h   v1.20.1</span><br><span class="line">worker-04.xcluster.io   Ready    &lt;none&gt;                 2d17h   v1.20.1</span><br><span class="line">worker-05.xcluster.io   Ready    &lt;none&gt;                 2d17h   v1.20.1</span><br><span class="line">[fury@Worker-01 ~]$</span><br></pre></td></tr></table></figure>
+
+<h4 id="常用的kubernetes命令"><a href="#常用的kubernetes命令" class="headerlink" title="常用的kubernetes命令"></a>常用的kubernetes命令</h4><ul>
+<li><code>$ sudo systemctl start|restart|stop kubelet</code>：开启、重启、停止kubelet</li>
+<li><code>$ sudo systemctl  status -l kubelet</code>：查看集群启动状态</li>
+<li><code>$ sudo jornalctl -f -u kubelet</code>：查看集群日志</li>
+<li><code>$ sudo kubectl get &lt;node|nodes&gt;</code>：列出所有node(及其状态)</li>
+<li><code>$ sudo kubectl delete node|nodes&gt; &lt;node name&gt;</code>：删除集群节点</li>
+<li><code>$ sudo kubectl get &lt;pod|pods&gt; [-n &lt;namespace&gt;]</code>：列出所有的pods</li>
+<li><code>$ sudo kubectl get &lt;svc|service|services&gt; [-n &lt;namespace&gt;]</code>：列出所有的服务</li>
+<li><code>$ sudo kubectl apply -f &lt;deployment.yml&gt;</code>：部署一个服务</li>
+<li><code>$ sudo kubectl delete -f &lt;deployment.yml&gt;</code>：移除一个服务</li>
+<li><code>$ sudo kubectl logs -f &lt;pod name&gt; [-n &lt;namespace&gt;]</code>：查看某个pod日志</li>
+</ul>
+<h4 id="安装配置过程中的问题"><a href="#安装配置过程中的问题" class="headerlink" title="安装配置过程中的问题"></a>安装配置过程中的问题</h4><ul>
+<li><p>在master上执行<code>$ sudo kubectl get nodes</code>报错：The connection to the server localhost:8080 was refused - did you specify the right host or port?</p>
+<p>  <strong>解决：</strong></p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> echo "export KUBECONFIG=/etc/kubernetes/admin.conf" &gt;&gt; ~/.bash_profile</span><br><span class="line"><span class="hljs-meta">$</span> sudo source ~/.bash_profile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行完<code>$ sudo kubeadm join</code>后在master节点执行<code>$ sudokubectl get nodes</code> 发现Node节点状态为NotReady；</p>
+<p>  在node节点查看日志<code>$ sudo journalctl -f -u kubelet</code>找到具体错误原因：</p>
+<blockquote>
+<p>summary_sys_containers.go:47] Failed to get system container stats for “/system.slice/kubelet.service”: failed to get cgroup stats for “/system.slice/kubelet.service”: failed to get container info for “/system.slice/kubelet.service”: unknown container “/system.slice/kubelet.service”</p>
+</blockquote>
+<p>  <strong>解决：</strong>是kubernetes和docker版本兼容性问题，启动时添加参数：**–runtime-cgroups=/systemd/system.slice –kubelet-cgroups=/systemd/system.slice**即可：</p>
+<ul>
+<li><p>开机自启动的服务是通过<code>$ sudo systemctl enable xxx</code>来配置，该命令执行后会在<code>/etc/systemd/system/multi-user.target.wants/</code>目录下新建一个<code>/usr/lib/systemd/system/xxx.service</code>的文件并创建软连接到当前目录</p>
+</li>
+<li><p>在<code>/usr/lib/systemd/system/xxx.service</code>同目录下找到<code>kubelet.service.d</code>文件夹，有个<code>/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf</code>文件，编辑，在KUBELET_CGROUP_ARGS属性添加：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice</span><br></pre></td></tr></table></figure>
+
+<p>  如果不存在”KUBELET_CGROUP_ARGS”属性则新增，同时在<code>ExecStart=/usr/bin/kubelet ....</code>后新增<code>$KUBELET_CGROUP_ARGS</code></p>
+<blockquote>
+<p>10-kubeadm.conf的路径网上提到的多为：*/etc/systemd/system/kubelet.service.d/10-kubeadm.conf*，本人的机器路径为：/usr/lib/systemd/system/kubelet.service.d</p>
+</blockquote>
+<p>  然后重启<code>$ sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet</code>即可解决。</p>
+</li>
+</ul>
+</li>
+<li><p>执行<code>$ sudo journalctl -f -u kubelet</code>或者<code>$ sudo systemctl status -l kubelet</code>发现日志中存在错误或警告：</p>
+<ul>
+<li><p>Unable to read config path “/etc/kubernetes/manifests”: path does not exist, ignoring</p>
+<p>  <strong>解决：</strong>执行<code>$ sudo mkdir -p /etc/kubernetes/manifests</code>然后重启kubelet。</p>
+</li>
+<li><p>failed to sync configmap cache: timed out waiting for the condition</p>
+<p>  <strong>解决：</strong>新增（编辑）<code>/var/lib/kubelet/config.yaml</code>添加</p>
+  <figure class="highlight yaml hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-attr">featureGates:</span></span><br><span class="line">  <span class="hljs-attr">CSIMigration:</span> <span class="hljs-literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>  然后重启所有node。</p>
+</li>
+<li><p>failed to collect filesystem stats - rootDiskErr: could not stat</p>
+<p>  <strong>解决：</strong>不支持overlay2导致的，编辑docker配置 <code>$ sudo vim /etc/sysconfig/docker</code>修改<code>--selinux-enabled=false</code> 然后重启docker<code>$ sudo systemctl restart docker</code></p>
+</li>
+<li><p>MemoryAccounting not enabled for pid: 1215， CPUAccounting not enabled for pid: 1208</p>
+<p>  查看这两个进程：<code>$ sudo ps -a 1208</code>、<code># ps -a 1215</code>：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[fury@Worker-01 ~]$ sudo ps -a 1208</span><br><span class="line">  PID TTY      STAT   TIME COMMAND</span><br><span class="line"> 1208 ?        Ssl    0:12 /usr/bin/dockerd-current --add-runtime docker-runc=/usr/libexec/docker/docker-runc-current --default-runtime=d</span><br><span class="line"> 8015 pts/0    R+     0:00 ps -a 1208</span><br><span class="line">[fury@Worker-01 ~]$ sudo ps -a 1215</span><br><span class="line">  PID TTY      STAT   TIME COMMAND</span><br><span class="line"> 1215 ?        Ssl    0:32 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/ku</span><br><span class="line"> 8079 pts/0    R+     0:00 ps -a 1215</span><br></pre></td></tr></table></figure>
+
+<p>  查看内存使用情况：<code>$ free -h</code></p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[fury@Worker-01 ~]$ free -h</span><br><span class="line">              total        used        free      shared  buff/cache   available</span><br><span class="line">Mem:           3.7G        868M        2.0G         10M        840M        2.6G</span><br><span class="line">Swap:            0B          0B          0B</span><br><span class="line">[fury@Worker-01 ~]$</span><br></pre></td></tr></table></figure>
+
+<p>  并没有存在内存不够的情况。</p>
+<p>  <strong>解决：</strong>明确指定<strong>DefaultCPUAccounting</strong>和<strong>DefaultMemoryAccounting</strong>即可</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo mkdir -p /etc/systemd/system.conf.d</span><br><span class="line"><span class="hljs-meta">$</span> sudo vim /etc/systemd/system.conf.d/kubernetes-accounting.conf</span><br><span class="line">[Manager]</span><br><span class="line">DefaultCPUAccounting=yes</span><br><span class="line">DefaultMemoryAccounting=yes</span><br><span class="line"><span class="hljs-meta">$</span> sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>执行<code>$ sudo kubectl get pods</code>： No resources found in default namespace</p>
+<p>  <strong>解决：</strong>不指定命名空间时默认在<strong>default</strong>这个命名空间；通过**-n**参数指定，系统命名空间为<code>kube-system</code>：</p>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubectl get pods -n kube-system</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/Kubernetes/">Kubernetes</a>, <a class="has-link-grey -link" href="/tags/k8s/">k8s</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <!--
+            <p style="padding-bottom: 1rem">
+            <span id="busuanzi_container_page_pv">
+               本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+            </span>
+            </p>
+            -->
+        
+        
+            <div class="social-share"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css">
+<script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script>
+            <!-- <div class="share-component" data-disabled="google, twitter, facebook, tencent, douban, linkedin"></div> -->
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3>
+        <div class="buttons is-centered">
+            
+                
+<a class="button is-success donate">
+    <span class="icon is-small">
+        <i class="fab fa-weixin"></i>
+    </span>
+    <span>微信</span>
+    <div class="qrcode"><img src="/images/wxpay.jpg" alt="微信"></div>
+</a>
+
+                
+                
+<a class="button is-info donate">
+    <span class="icon is-small">
+        <i class="fab fa-alipay"></i>
+    </span>
+    <span>支付宝</span>
+    <div class="qrcode"><img src="/images/alipay.jpg" alt="支付宝"></div>
+</a>
+
+                
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/03/01/b7863297bbd9f2f618.html">
+                <span class="level-item">MySQL与Postgres的比较</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+<div class="card">
+    <div class="card-content">
+        <h3 class="title is-5 has-text-weight-normal">评论</h3>
+        
+<script>
+    var disqus_config = function () {
+        this.page.url = 'https://i36.Me/2020/12/26/f586b25f145a49b6b.html';
+        this.page.identifier = 'f586b25f145a49b6b';
+    };
+    (function() {
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'i36me' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+<div id="disqus_thread">
+    
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+    </div>
+</div>
+
+</div>
+                 
+                    
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left is-sticky">
+    
+    
+        <div class="column-right-shadow  ">
+            
+                
+<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
+<div class="card widget" id="toc" style="overflow: auto;">
+    <div class="card-content">
+        <div class="menu" style="max-height: 500px; overflow: auto;">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a href="#先期工作">
+        <span class="has-mr-6">1</span>
+        <span>先期工作</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#机器集群实现方案">
+        <span class="has-mr-6">1.1</span>
+        <span>机器集群实现方案</span>
+        </a></li><li>
+        <a href="#Kubernetes集群设计">
+        <span class="has-mr-6">1.2</span>
+        <span>Kubernetes集群设计</span>
+        </a></li></ul></li><li>
+        <a href="#创建服务器群">
+        <span class="has-mr-6">2</span>
+        <span>创建服务器群</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#创建CentOS7样机">
+        <span class="has-mr-6">2.1</span>
+        <span>创建CentOS7样机</span>
+        </a></li><li>
+        <a href="#创建Kubernetes样机">
+        <span class="has-mr-6">2.2</span>
+        <span>创建Kubernetes样机</span>
+        </a></li><li>
+        <a href="#克隆其他K8s集群机器">
+        <span class="has-mr-6">2.3</span>
+        <span>克隆其他K8s集群机器</span>
+        </a></li></ul></li><li>
+        <a href="#配置K8s集群">
+        <span class="has-mr-6">3</span>
+        <span>配置K8s集群</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#初始化配置Master">
+        <span class="has-mr-6">3.1</span>
+        <span>初始化配置Master</span>
+        </a></li><li>
+        <a href="#其他节点加入K8s集群">
+        <span class="has-mr-6">3.2</span>
+        <span>其他节点加入K8s集群</span>
+        </a></li><li>
+        <a href="#常用的kubernetes命令">
+        <span class="has-mr-6">3.3</span>
+        <span>常用的kubernetes命令</span>
+        </a></li><li>
+        <a href="#安装配置过程中的问题">
+        <span class="has-mr-6">3.4</span>
+        <span>安装配置过程中的问题</span>
+        </a></li></ul></li></ul>
+        </div>
+    </div>
+</div>
+
+            
+                
+<div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <a href="/2020/12/26/f586b25f145a49b6b.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XOohUot8Xp5MJge.jpg" alt="Kubernetes集群搭建">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-12-25T16:00:00.000Z">2020-12-26</time></div>
+                    <a href="/2020/12/26/f586b25f145a49b6b.html" class="has-link-black-ter is-size-6">Kubernetes集群搭建</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Kubernetes/">Kubernetes</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2019-02-28T16:00:00.000Z">2019-03-01</time></div>
+                    <a href="/2019/03/01/b7863297bbd9f2f618.html" class="has-link-black-ter is-size-6">MySQL与Postgres的比较</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/MySQL/">MySQL</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/07/01/d6e189234c794124.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/SzQ6SyZq9pQSSBm.jpg" alt="全民夺宝重构细节：幸运码的生成">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-06-30T16:00:00.000Z">2016-07-01</time></div>
+                    <a href="/2016/07/01/d6e189234c794124.html" class="has-link-black-ter is-size-6">全民夺宝重构细节：幸运码的生成</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/05/01/4e7557d65574406c.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/XWLFEGXlF1U9Itu.png" alt="Java8 ArrayList&lt;E&gt;源码解读">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-04-30T16:00:00.000Z">2016-05-01</time></div>
+                    <a href="/2016/05/01/4e7557d65574406c.html" class="has-link-black-ter is-size-6">Java8 ArrayList&lt;E&gt;源码解读</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <a href="/2016/03/06/43c600407ad34f9a.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/YuhSY3UnXVI6kB2.png" alt="线程间同步 - 轮流循环">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-03-05T16:00:00.000Z">2016-03-06</time></div>
+                    <a href="/2016/03/06/43c600407ad34f9a.html" class="has-link-black-ter is-size-6">线程间同步 - 轮流循环</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+
+            
+                <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">7</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+            
+                <!-- <div class="card widget">
+    
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <ul class="menu-list">
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/ArrayList/">
+                        <span class="level-start">
+                            <span class="level-item">ArrayList</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/C/">
+                        <span class="level-start">
+                            <span class="level-item">C++</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Django/">
+                        <span class="level-start">
+                            <span class="level-item">Django</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/EBS/">
+                        <span class="level-start">
+                            <span class="level-item">EBS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">6</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/FTP/">
+                        <span class="level-start">
+                            <span class="level-item">FTP</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/GNome/">
+                        <span class="level-start">
+                            <span class="level-item">GNome</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Hexo/">
+                        <span class="level-start">
+                            <span class="level-item">Hexo</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Java/">
+                        <span class="level-start">
+                            <span class="level-item">Java</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">3</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Kubernetes/">
+                        <span class="level-start">
+                            <span class="level-item">Kubernetes</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Linux/">
+                        <span class="level-start">
+                            <span class="level-item">Linux</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">5</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/MySQL/">
+                        <span class="level-start">
+                            <span class="level-item">MySQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Oracle/">
+                        <span class="level-start">
+                            <span class="level-item">Oracle</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">7</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/PLSQL/">
+                        <span class="level-start">
+                            <span class="level-item">PLSQL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Postgres/">
+                        <span class="level-start">
+                            <span class="level-item">Postgres</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Python/">
+                        <span class="level-start">
+                            <span class="level-item">Python</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/RSA/">
+                        <span class="level-start">
+                            <span class="level-item">RSA</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSH/">
+                        <span class="level-start">
+                            <span class="level-item">SSH</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/SSL/">
+                        <span class="level-start">
+                            <span class="level-item">SSL</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/Ubuntu/">
+                        <span class="level-start">
+                            <span class="level-item">Ubuntu</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/k8s/">
+                        <span class="level-start">
+                            <span class="level-item">k8s</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/全民夺宝/">
+                        <span class="level-start">
+                            <span class="level-item">全民夺宝</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存/">
+                        <span class="level-start">
+                            <span class="level-item">内存</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/内存对齐/">
+                        <span class="level-start">
+                            <span class="level-item">内存对齐</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/博客/">
+                        <span class="level-start">
+                            <span class="level-item">博客</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/数据库/">
+                        <span class="level-start">
+                            <span class="level-item">数据库</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">2</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/数组/">
+                        <span class="level-start">
+                            <span class="level-item">数组</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/源/">
+                        <span class="level-start">
+                            <span class="level-item">源</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/生活/">
+                        <span class="level-start">
+                            <span class="level-item">生活</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/白云山/">
+                        <span class="level-start">
+                            <span class="level-item">白云山</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/线程/">
+                        <span class="level-start">
+                            <span class="level-item">线程</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/线程同步/">
+                        <span class="level-start">
+                            <span class="level-item">线程同步</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/随机/">
+                        <span class="level-start">
+                            <span class="level-item">随机</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/集群/">
+                        <span class="level-start">
+                            <span class="level-item">集群</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div> -->
+            
+        </div>
+    
+</div>
+
+
+                
+            </div>
+        </div>
+    </section>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+<footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/logo.png" alt="Kubernetes集群搭建" height="28">
+                
+                </a>
+                <p class="is-size-7" style="padding-bottom: 0.5em">
+                    <!-- <span id="busuanzi_container_site_pv">
+                        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+                    </span>
+                    <span id="busuanzi_container_site_uv">
+                      &nbsp;&nbsp;&nbsp;本站访客数<span id="busuanzi_value_site_uv"></span>人次
+                    </span>
+                    -->
+                    <span id="timeDate" class="is-size-7">&nbsp;&nbsp;&nbsp;载入天数...</span>
+                    <span id="times" class="is-size-7">&nbsp;&nbsp;&nbsp;载入时分秒...</span>
+                </p>
+                <p class="is-size-7">
+                &copy; 2020 阿北&nbsp;
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
+                </p>
+                <script>
+                    var now = new Date(); 
+                    function createtime() { 
+                        var grt = new Date("10/01/2015 16:49:00");//此处修改你的建站时间或者网站上线时间 
+                        now.setTime(now.getTime()+250); 
+                        days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                        hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                        if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                        mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                        seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                        snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                        document.getElementById("timeDate").innerHTML = "本站已安全运行 "+dnum+" 天 "; 
+                        document.getElementById("times").innerHTML = hnum + " 小时 " + mnum + " 分 " + snum + " 秒"; 
+                    } 
+                setInterval("createtime()",250);
+                </script>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" title="Download on GitHub" href="http://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+    
+    
+    
+    <script src="/js/animation.js"></script>
+    
+
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+    <script src="/js/gallery.js" defer></script>
+    
+
+    
+    
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+    
+    
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {matchFontHeight: false},
+        SVG: {matchFontHeight: false},
+        CommonHTML: {matchFontHeight: false}
+    });
+});
+</script>
+
+    
+    
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+    
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么...">
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css"><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+    
+</body>
+</html>
