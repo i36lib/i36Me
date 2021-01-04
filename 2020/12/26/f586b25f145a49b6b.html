@@ -165,7 +165,7 @@
                 <span class="level-item has-text-grey">
                     
                     
-                    28 分钟 读完 (大约 4247 个字)
+                    28 分钟 读完 (大约 4261 个字)
                 </span>
                 
             </div>
@@ -255,6 +255,7 @@
 </tr>
 </tbody></table>
 <h4 id="参考文档列表"><a href="#参考文档列表" class="headerlink" title="参考文档列表"></a>参考文档列表</h4><ul>
+<li><a href="/2020/12/26/9bf8861aca85e8311.html">在CentOS集群上部署DNS服务</a></li>
 <li><a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/home/</a></li>
 <li><a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/install-kubeadm/</a></li>
 <li><a href="https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/" target="_blank" rel="noopener">https://kubernetes.io/zh/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/</a></li>
@@ -291,7 +292,7 @@
 <li><p>安装net-tools(包含ifconfig)：<code>$ sudo yum install net-tools</code></p>
 </li>
 <li><p>启用SSH登录：添加MBP的公钥到<code>~/.ssh/authorized_keys</code>，重启SSHD，修改<code>.ssh</code>目录权限</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo service sshd restart</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chmod 700 ~/.ssh</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo chmod 600 ~/.ssh/authorized_keys</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo service sshd restart</span><br><span class="line"><span class="hljs-meta">$</span> sudo chmod 700 ~/.ssh</span><br><span class="line"><span class="hljs-meta">$</span> sudo chmod 600 ~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>设置静态IP</p>
 <ul>
@@ -330,26 +331,26 @@
 <li><p>修改shell显示名：<code>$ sudo vi ~/.bashrc</code>添加<code>export PS1=&#39;[\u@Worker-st \W]\$ &#39;</code></p>
 </li>
 <li><p>使用阿里云的Repo（备份原<code>/etc/yum.repos.d/</code>下的repo文件然后清空该文件夹）：</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> /etc/yum.repos.d/</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget http://mirrors.aliyun.com/repo/Centos-7.repo</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum clean all &amp;&amp; yum makecache</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> cd /etc/yum.repos.d/</span><br><span class="line"><span class="hljs-meta">$</span> wget http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"><span class="hljs-meta">$</span> wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br><span class="line"><span class="hljs-meta">$</span> wget -O /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo</span><br><span class="line"><span class="hljs-meta">$</span> yum clean all &amp;&amp; yum makecache</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>安装Vim8.x：</p>
 <ul>
 <li><p>安装所需的基础库：</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> yum install -y gcc gcc-c++ ruby ruby-devel lua lua-devel ctags git python python-devel tcl-devel ncurses-devel perl perl-devel perl-ExtUtils-ParseXS perl-ExtUtils-CBuilder perl-ExtUtils-Embed</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> yum install -y gcc gcc-c++ ruby ruby-devel lua lua-devel ctags git python python-devel tcl-devel ncurses-devel perl perl-devel perl-ExtUtils-ParseXS perl-ExtUtils-CBuilder perl-ExtUtils-Embed</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>下载Vim-v8.1：</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> wget https://github.com/vim/vim/archive/v8.1.1312.tar.gz</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> tar -zxvf v8.1.1312.tar.gz</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">cd</span> vim-8.1.1312</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> wget https://github.com/vim/vim/archive/v8.1.1312.tar.gz</span><br><span class="line"><span class="hljs-meta">$</span> tar -zxvf v8.1.1312.tar.gz</span><br><span class="line"><span class="hljs-meta">$</span> cd vim-8.1.1312</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>开始安装：<code>--with-python-config-dir</code>这项要看自己的实际路径，是python-devel带的目录</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> ./configure --with-features=huge \</span></span><br><span class="line">            --enable-multibyte \</span><br><span class="line">            --enable-rubyinterp=yes \</span><br><span class="line">            --enable-pythoninterp=yes \</span><br><span class="line">            --with-python-config-dir=/usr/lib64/python2.7/config \</span><br><span class="line">            --enable-perlinterp=yes \</span><br><span class="line">            --enable-luainterp=yes \</span><br><span class="line">            --enable-cscope \</span><br><span class="line">            --prefix=/usr/local</span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> make -j4 VIMRUNTIMEDIR=/usr/<span class="hljs-built_in">local</span>/share/vim/vim81 all</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo sudo make -j4 install</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> ./configure --with-features=huge \</span><br><span class="line">            --enable-multibyte \</span><br><span class="line">            --enable-rubyinterp=yes \</span><br><span class="line">            --enable-pythoninterp=yes \</span><br><span class="line">            --with-python-config-dir=/usr/lib64/python2.7/config \</span><br><span class="line">            --enable-perlinterp=yes \</span><br><span class="line">            --enable-luainterp=yes \</span><br><span class="line">            --enable-cscope \</span><br><span class="line">            --prefix=/usr/local</span><br><span class="line"><span class="hljs-meta">$</span> make -j4 VIMRUNTIMEDIR=/usr/local/share/vim/vim81 all</span><br><span class="line"><span class="hljs-meta">$</span> sudo sudo make -j4 install</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>更改系统默认编辑器并将vi指向vim</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo update-alternatives --install /usr/bin/editor editor /usr/<span class="hljs-built_in">local</span>/bin/vim 1</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo update-alternatives --<span class="hljs-built_in">set</span> editor /usr/<span class="hljs-built_in">local</span>/bin/vim</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo update-alternatives --install /usr/bin/vi vi /usr/<span class="hljs-built_in">local</span>/bin/vim 1</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo update-alternatives --<span class="hljs-built_in">set</span> vi /usr/<span class="hljs-built_in">local</span>/bin/vim</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/vim 1</span><br><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --set editor /usr/local/bin/vim</span><br><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/vim 1</span><br><span class="line"><span class="hljs-meta">$</span> sudo update-alternatives --set vi /usr/local/bin/vim</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
 <li><p>安装其他基础软件：</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo yum install unzip zip</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo yum install gcc gcc-c++ glibc</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum install unzip zip</span><br><span class="line"><span class="hljs-meta">$</span> sudo yum install gcc gcc-c++ glibc</span><br></pre></td></tr></table></figure>
 
 </li>
 </ul>
@@ -386,7 +387,7 @@
 </ul>
 </li>
 <li><p>安装docker</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo yum -y install docker</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line"><span class="hljs-meta">$</span> sudo yum -y install docker</span><br></pre></td></tr></table></figure>
 
 <p>  由于内核可能不支持 <strong>overlay2</strong>所以需要升级内核或者禁用overlay2(选择禁用，安装完docker可以启动docker测试下是否支持，启动docker不报错的可以忽略这一步)：<code>$ sudo vim /etc/sysconfig/docker</code>修改<code>--selinux-enabled=false</code> </p>
 </li>
@@ -400,12 +401,12 @@
   <figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-attr">net.bridge.bridge-nf-call-ip6tables</span> = <span class="hljs-number">1</span></span><br><span class="line"><span class="hljs-attr">net.bridge.bridge-nf-call-iptables</span> = <span class="hljs-number">1</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>让其生效</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo sysctl -p</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo <span class="hljs-built_in">echo</span> <span class="hljs-string">"1"</span> &gt; /proc/sys/net/ipv4/ip_forward</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo sysctl -p</span><br><span class="line"><span class="hljs-meta">$</span> sudo echo "1" &gt; /proc/sys/net/ipv4/ip_forward</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
 <li><p>安装k8s相关安装包，使用 <code>$ sudo yum list kube*</code>  来查看当前yum源支持的最新版本（这里是1.20.1-0）</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo yum -y install kubeadm-1.20.1-0 kubelet-1.20.1-0 kubectl-1.20.1-0</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum -y install kubeadm-1.20.1-0 kubelet-1.20.1-0 kubectl-1.20.1-0</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>自启动服务：<code>$ sudo systemctl restart kubelet &amp;&amp; systemctl enable kubelet</code></p>
 </li>
@@ -455,7 +456,7 @@
 </ul>
 </li>
 </ul>
-<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo kubeadm init \</span></span><br><span class="line">--apiserver-advertise-address=192.168.99.101 \ # 写masterIP地址即可</span><br><span class="line">--image-repository registry.aliyuncs.com/google_containers \</span><br><span class="line">--kubernetes-version v1.20.1 \    # 注意是v1.20.1而不是v1.20.1-0</span><br><span class="line">--service-cidr=10.2.0.0/16 \</span><br><span class="line">--pod-network-cidr=10.244.0.0/16</span><br><span class="line"></span><br><span class="line">Your Kubernetes control-plane has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br><span class="line"></span><br><span class="line">Alternatively, if you are the root user, you can run:</span><br><span class="line"></span><br><span class="line">  export KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">Then you can join any number of worker nodes by running the following on each as root:</span><br><span class="line"></span><br><span class="line">kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910 </span><br><span class="line"></span><br><span class="line">[fury@Worker-01 ~]$</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubeadm init \</span><br><span class="line">--apiserver-advertise-address=192.168.99.101 \ # 写masterIP地址即可</span><br><span class="line">--image-repository registry.aliyuncs.com/google_containers \</span><br><span class="line">--kubernetes-version v1.20.1 \    # 注意是v1.20.1而不是v1.20.1-0</span><br><span class="line">--service-cidr=10.2.0.0/16 \</span><br><span class="line">--pod-network-cidr=10.244.0.0/16</span><br><span class="line"></span><br><span class="line">Your Kubernetes control-plane has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br><span class="line"></span><br><span class="line">Alternatively, if you are the root user, you can run:</span><br><span class="line"></span><br><span class="line">  export KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">Then you can join any number of worker nodes by running the following on each as root:</span><br><span class="line"></span><br><span class="line">kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910 </span><br><span class="line"></span><br><span class="line">[fury@Worker-01 ~]$</span><br></pre></td></tr></table></figure>
 
 <p>可以看到初始化已经OK了，通过26行的代码可以在其他node上执行以让master发现（加入k8s集群）。</p>
 <ul>
@@ -466,10 +467,10 @@
 <p>到这里master就初始化完毕了。</p>
 <h4 id="其他节点加入K8s集群"><a href="#其他节点加入K8s集群" class="headerlink" title="其他节点加入K8s集群"></a>其他节点加入K8s集群</h4><ul>
 <li><p>将node节点加入到master集群中，在需要加入k8s集群的node节点上执行该命令（上面的输出）</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr \</span></span><br><span class="line">    --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910</span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910</span><br></pre></td></tr></table></figure>
 
 <p>  如果忘记kubeadm join后的参数，可用通过下面命令来获取新的：</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo kubeadm token create --<span class="hljs-built_in">print</span>-join-command</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubeadm token create --print-join-command</span><br></pre></td></tr></table></figure>
 
 <p>  在Worker-02上的操作结果：</p>
   <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[fury@Worker-02 ~]$ sudo kubeadm join 192.168.99.101:6443 --token 9k35nl.lyfuzdlxzqbwonsr     --discovery-token-ca-cert-hash sha256:91f6bd754f302b858b02d02f16e164d72b39a9ebcba841931e1e80388fd91910 </span><br><span class="line">[preflight] Running pre-flight checks</span><br><span class="line">[preflight] Reading configuration from the cluster...</span><br><span class="line">[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'</span><br><span class="line">[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"</span><br><span class="line">[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"</span><br><span class="line">[kubelet-start] Starting the kubelet</span><br><span class="line">[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...</span><br><span class="line"></span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run 'kubectl get nodes' on the control-plane to see this node join the cluster.</span><br><span class="line"></span><br><span class="line">[fury@Worker-02 ~]$</span><br></pre></td></tr></table></figure>
@@ -494,7 +495,7 @@
 <h4 id="安装配置过程中的问题"><a href="#安装配置过程中的问题" class="headerlink" title="安装配置过程中的问题"></a>安装配置过程中的问题</h4><ul>
 <li><p>在master上执行<code>$ sudo kubectl get nodes</code>报错：The connection to the server localhost:8080 was refused - did you specify the right host or port?</p>
 <p>  <strong>解决：</strong></p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> <span class="hljs-built_in">echo</span> <span class="hljs-string">"export KUBECONFIG=/etc/kubernetes/admin.conf"</span> &gt;&gt; ~/.bash_profile</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo <span class="hljs-built_in">source</span> ~/.bash_profile</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> echo "export KUBECONFIG=/etc/kubernetes/admin.conf" &gt;&gt; ~/.bash_profile</span><br><span class="line"><span class="hljs-meta">$</span> sudo source ~/.bash_profile</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>执行完<code>$ sudo kubeadm join</code>后在master节点执行<code>$ sudokubectl get nodes</code> 发现Node节点状态为NotReady；</p>
 <p>  在node节点查看日志<code>$ sudo journalctl -f -u kubelet</code>找到具体错误原因：</p>
@@ -539,13 +540,13 @@
 
 <p>  并没有存在内存不够的情况。</p>
 <p>  <strong>解决：</strong>明确指定<strong>DefaultCPUAccounting</strong>和<strong>DefaultMemoryAccounting</strong>即可</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo mkdir -p /etc/systemd/system.conf.d</span></span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo vim /etc/systemd/system.conf.d/kubernetes-accounting.conf</span></span><br><span class="line">[Manager]</span><br><span class="line">DefaultCPUAccounting=yes</span><br><span class="line">DefaultMemoryAccounting=yes</span><br><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo mkdir -p /etc/systemd/system.conf.d</span><br><span class="line"><span class="hljs-meta">$</span> sudo vim /etc/systemd/system.conf.d/kubernetes-accounting.conf</span><br><span class="line">[Manager]</span><br><span class="line">DefaultCPUAccounting=yes</span><br><span class="line">DefaultMemoryAccounting=yes</span><br><span class="line"><span class="hljs-meta">$</span> sudo systemctl daemon-reload &amp;&amp; systemctl restart kubelet</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
 <li><p>执行<code>$ sudo kubectl get pods</code>： No resources found in default namespace</p>
 <p>  <strong>解决：</strong>不指定命名空间时默认在<strong>default</strong>这个命名空间；通过**-n**参数指定，系统命名空间为<code>kube-system</code>：</p>
-  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span><span class="hljs-bash"> sudo kubectl get pods -n kube-system</span></span><br></pre></td></tr></table></figure>
+  <figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo kubectl get pods -n kube-system</span><br></pre></td></tr></table></figure>
 
 
 </li>
@@ -619,8 +620,8 @@
         
         
         <div class="level-end">
-            <a class="level level-item has-link-grey  article-nav-next" href="/2019/03/01/b7863297bbd9f2f618.html">
-                <span class="level-item">MySQL与Postgres的比较</span>
+            <a class="level level-item has-link-grey  article-nav-next" href="/2020/12/26/9bf8861aca85e8311.html">
+                <span class="level-item">在CentOS集群上部署DNS服务</span>
                 <i class="level-item fas fa-chevron-right"></i>
             </a>
         </div>
@@ -763,6 +764,25 @@
         
         <article class="media">
             
+            <a href="/2020/12/26/9bf8861aca85e8311.html" class="media-left">
+                <p class="image is-64x64">
+                    <img class="thumbnail" src="/i/DJIPLLmaff6nJJi.jpg" alt="在CentOS集群上部署DNS服务">
+                </p>
+            </a> 
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-12-25T16:00:00.000Z">2020-12-26</time></div>
+                    <a href="/2020/12/26/9bf8861aca85e8311.html" class="has-link-black-ter is-size-6">在CentOS集群上部署DNS服务</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/Linux/">Linux</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
             <a href="/2019/03/01/b7863297bbd9f2f618.html" class="media-left">
                 <p class="image is-64x64">
                     <img class="thumbnail" src="/i/gwfcUk9i2GF57tW.png" alt="MySQL与Postgres的比较">
@@ -818,25 +838,6 @@
             </div>
         </article>
         
-        <article class="media">
-            
-            <a href="/2016/03/06/43c600407ad34f9a.html" class="media-left">
-                <p class="image is-64x64">
-                    <img class="thumbnail" src="/i/YuhSY3UnXVI6kB2.png" alt="线程间同步 - 轮流循环">
-                </p>
-            </a> 
-            
-            <div class="media-content">
-                <div class="content">
-                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2016-03-05T16:00:00.000Z">2016-03-06</time></div>
-                    <a href="/2016/03/06/43c600407ad34f9a.html" class="has-link-black-ter is-size-6">线程间同步 - 轮流循环</a>
-                    <p class="is-size-7 is-uppercase">
-                        <a class="has-link-grey -link" href="/categories/Java/">Java</a>
-                    </p>
-                </div>
-            </div>
-        </article>
-        
     </div>
 </div>
 
@@ -855,7 +856,7 @@
                     <span class="level-item">十二月 2020</span>
                 </span>
                 <span class="level-end">
-                    <span class="level-item tag">1</span>
+                    <span class="level-item tag">2</span>
                 </span>
             </a>
         </li>
@@ -996,6 +997,28 @@
                 </li>
                 
                 <li>
+                    <a class="level is-marginless" href="/tags/CentOS/">
+                        <span class="level-start">
+                            <span class="level-item">CentOS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a class="level is-marginless" href="/tags/DNS/">
+                        <span class="level-start">
+                            <span class="level-item">DNS</span>
+                        </span>
+                        <span class="level-end">
+                            <span class="level-item tag">1</span>
+                        </span>
+                    </a>
+                </li>
+                
+                <li>
                     <a class="level is-marginless" href="/tags/Django/">
                         <span class="level-start">
                             <span class="level-item">Django</span>
@@ -1078,7 +1101,7 @@
                             <span class="level-item">Linux</span>
                         </span>
                         <span class="level-end">
-                            <span class="level-item tag">5</span>
+                            <span class="level-item tag">6</span>
                         </span>
                     </a>
                 </li>
@@ -1374,7 +1397,7 @@
                     <span id="times" class="is-size-7">&nbsp;&nbsp;&nbsp;载入时分秒...</span>
                 </p>
                 <p class="is-size-7">
-                &copy; 2020 阿北&nbsp;
+                &copy; 2021 阿北&nbsp;
                 Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & <a href="http://github.com/ppoffice/hexo-theme-icarus">Icarus</a>
                 </p>
                 <script>

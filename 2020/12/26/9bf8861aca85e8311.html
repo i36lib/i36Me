@@ -2,22 +2,22 @@
 <html lang="zh">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
-<title>关于我 - 阿北</title>
+<title>在CentOS集群上部署DNS服务 - 阿北</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
 
-    <meta name="description" content="阿北，2013年毕业于云南大学国家示范性软件学院. &amp;gt; 后端研发工程师，擅长Java/Python. &amp;gt; 常跑步，爱好编程，喜欢听民谣，睡懒觉. &amp;gt; 目前就职于AAM中国（Artsalliancemedia），任职高级研发工程师. 联系我 在blog留言 Wechat: i03020 Email: i36.lib#gmail.com">
-<meta property="og:type" content="website">
-<meta property="og:title" content="关于我">
-<meta property="og:url" content="https://i36.Me/about/index.html">
+    <meta name="keywords" content="Linux,DNS,CentOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在CentOS集群上部署DNS服务">
+<meta property="og:url" content="https://i36.Me/2020/12/26/9bf8861aca85e8311.html">
 <meta property="og:site_name" content="阿北">
-<meta property="og:description" content="阿北，2013年毕业于云南大学国家示范性软件学院. &amp;gt; 后端研发工程师，擅长Java/Python. &amp;gt; 常跑步，爱好编程，喜欢听民谣，睡懒觉. &amp;gt; 目前就职于AAM中国（Artsalliancemedia），任职高级研发工程师. 联系我 在blog留言 Wechat: i03020 Email: i36.lib#gmail.com">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-21T16:00:00.000Z">
+<meta property="og:image" content="https://i36.me/i/DJIPLLmaff6nJJi.jpg">
+<meta property="og:updated_time" content="2020-12-25T16:00:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="关于我">
-<meta name="twitter:description" content="阿北，2013年毕业于云南大学国家示范性软件学院. &amp;gt; 后端研发工程师，擅长Java/Python. &amp;gt; 常跑步，爱好编程，喜欢听民谣，睡懒觉. &amp;gt; 目前就职于AAM中国（Artsalliancemedia），任职高级研发工程师. 联系我 在blog留言 Wechat: i03020 Email: i36.lib#gmail.com">
+<meta name="twitter:title" content="在CentOS集群上部署DNS服务">
+<meta name="twitter:image" content="https://i36.me/i/DJIPLLmaff6nJJi.jpg">
 
 
 
@@ -92,7 +92,7 @@
         <div class="navbar-brand is-flex-center">
             <a class="navbar-item navbar-logo" href="/">
             
-                <img src="/images/logo.png" alt="关于我" height="28">
+                <img src="/images/logo.png" alt="在CentOS集群上部署DNS服务" height="28">
             
             </a>
         </div>
@@ -106,7 +106,7 @@
                 
                 <a class="navbar-item" href="/archives">归档</a>
                 
-                <a class="navbar-item is-active" href="/about">关于</a>
+                <a class="navbar-item" href="/about">关于</a>
                 
             </div>
             
@@ -122,6 +122,10 @@
                     
                 
                 
+                <a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;">
+                    <i class="fas fa-list-ul"></i>
+                </a>
+                
                 
                 <a class="navbar-item search" title="搜索" href="javascript:;">
                     <i class="fas fa-search"></i>
@@ -136,26 +140,182 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-8-tablet is-8-desktop is-9-widescreen has-order-2 column-main"><div class="card">
-    <!--  -->
+    <!-- 
+    <div class="card-image">
+        <span  class="image is-7by1">
+            <img class="thumbnail" src="/i/DJIPLLmaff6nJJi.jpg" alt="在CentOS集群上部署DNS服务">
+        </span>
+    </div>
+     -->
     <div class="card-content article ">
         <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
             
-                关于我
+                在CentOS集群上部署DNS服务
             
         </h1>
         
+            <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto" style="margin-bottom: 0;">
+            <div class="level-left">
+                <i class="fas fa-calendar">&nbsp</i>
+                <time class="level-item has-text-grey" datetime="2020-12-25T16:00:00.000Z">2020-12-26</time>
+                
+                
+                <i class="fas fa-book">&nbsp</i>
+                <span class="level-item has-text-grey">
+                    
+                    
+                    10 分钟 读完 (大约 1518 个字)
+                </span>
+                
+            </div>
+        </div>
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                
+                    <i class="fas fa-folder-open">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/categories/Linux/">Linux</a>
+                    </div>
+                
+                
+                    <i class="fas fa-tags">&nbsp</i>
+                    <div class="level-item">
+                    <a class="has-link-grey -link" href="/tags/CentOS/">CentOS</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/DNS/">DNS</a>&nbsp;/&nbsp;<a class="has-link-grey -link" href="/tags/Linux/">Linux</a>
+                    </div>
+                
+            </div>
+        </div>
+        
         <div class="content">
              
-            <p>阿北，2013年毕业于云南大学国家示范性软件学院.</p>
-<p><strong>&gt;</strong> 后端研发工程师，擅长Java/Python.</p>
-<p><strong>&gt;</strong> 常跑步，爱好编程，喜欢听民谣，睡懒觉.</p>
-<p><strong>&gt;</strong> 目前就职于AAM中国（Artsalliancemedia），任职高级研发工程师.</p>
-<h3 id="联系我"><a href="#联系我" class="headerlink" title="联系我"></a>联系我</h3><ul>
-<li>在blog留言</li>
-<li>Wechat: i03020</li>
-<li>Email: i36.lib#gmail.com</li>
+            <p><img src="/i/DJIPLLmaff6nJJi.jpg"></p>
+<a id="more"></a>
+
+<p>在<a href="/2020/12/26/f586b25f145a49b6b.html">Kubernetes集群搭建</a>中记录了构建6台机器的集群用以跑K8s的搭建过程，本文记录在集群内搭建一个DNS服务、让各个机器在集群内可通过域名可访问其他机器的过程。集群机器的IP、Hostname等的设计如下：</p>
+<table>
+<thead>
+<tr>
+<th>Hostname</th>
+<th>IP Address</th>
+<th>备注说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>worker-st.xcluster.io</td>
+<td>192.168.99.100</td>
+<td>DNS Master</td>
+</tr>
+<tr>
+<td>worker-01.xcluster.io</td>
+<td>192.168.99.101</td>
+<td>作为K8s集群的master节点，DNS Slave</td>
+</tr>
+<tr>
+<td>worker-02.xcluster.io</td>
+<td>192.168.99.102</td>
+<td>作为K8s集群的1号Node机器，负责跑Pods</td>
+</tr>
+<tr>
+<td>worker-03.xcluster.io</td>
+<td>192.168.99.103</td>
+<td>作为K8s集群的2号Node机器，负责跑Pods</td>
+</tr>
+<tr>
+<td>worker-04.xcluster.io</td>
+<td>192.168.99.104</td>
+<td>作为K8s集群的3号Node机器，负责跑Pods</td>
+</tr>
+<tr>
+<td>worker-05.xcluster.io</td>
+<td>192.168.99.105</td>
+<td>作为K8s集群的4号Node机器，负责跑Pods</td>
+</tr>
+</tbody></table>
+<p>选择192.168.99.100和192.168.99.101作为DNS服务器的主DNS和DNS Slave。</p>
+<br>
+
+<h4 id="安装DNS-Server"><a href="#安装DNS-Server" class="headerlink" title="安装DNS Server"></a>安装DNS Server</h4><p>在两台机器上都执行相同的安装操作来安装named服务：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo yum install bind bind-utils -y</span><br></pre></td></tr></table></figure>
+
+<p>安装完成以后通过如下命令设置为系统自启动服务，启动|停止|重启服务，及查看服务状态：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo systemctl enable named</span><br><span class="line"><span class="hljs-meta">$</span> sudo systemctl start|stop|restart named</span><br><span class="line"><span class="hljs-meta">$</span> sudo systemctl status named</span><br></pre></td></tr></table></figure>
+
+<p>DNS服务的配置文件为<code>/etc/named.conf</code>。</p>
+<br>
+
+<h4 id="配置DNS-Server"><a href="#配置DNS-Server" class="headerlink" title="配置DNS Server"></a>配置DNS Server</h4><h5 id="配置Master"><a href="#配置Master" class="headerlink" title="配置Master"></a>配置Master</h5><p>编辑配置文件<code>/etc/named.conf</code>，在<code>listen-on</code>当中添加主DNS的IP地址（本机IP：192.168.99.100）、添加<code>allow-query</code>和<code>allow-transfer</code>选项，并添加我们即将配置的<code>xcluster.io</code>域名的<strong>zone</strong>配置文件路径；添加后如下：</p>
+<figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">    listen-on port 53 &#123; 127.0.0.1; 192.168.99.100;&#125;;</span><br><span class="line">    <span class="hljs-comment"># 省略其他配置</span></span><br><span class="line">    allow-query     &#123; localhost; 192.168.99.0/24;&#125;;     ### 子网范围 ###</span><br><span class="line">    allow-transfer  &#123; localhost; 192.168.99.101; &#125;;     ### DNS Slave的IP地址 ###</span><br><span class="line">    <span class="hljs-comment"># 省略其他配置</span></span><br><span class="line">    include "/etc/named/xcluster.io.zones";</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后新建<code>/etc/named/xcluster.io.zones</code>文件，为<code>xcluster.io</code>指定<strong>zone</strong>配置信息：</p>
+<figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">zone "xcluster.io" IN &#123;</span><br><span class="line">    type master;</span><br><span class="line">    file "forward.xcluster";</span><br><span class="line">    allow-update &#123; none; &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">zone "99.168.192.in-addr.arpa" IN &#123;   # 注意到命名开始是IP地址里面的网络号的反写</span><br><span class="line">    type master;</span><br><span class="line">    file "reverse.xcluster";</span><br><span class="line">    allow-update &#123; none; &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们在<strong>zone</strong>文件中指定了具体的配置文件，接下来我们将创建和配置这两个文件，他们要放置在<code>/var/named</code>目录下：</p>
+<ul>
+<li><p><strong>/var/named/forward.xcluster.io</strong>：</p>
+  <figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$TTL 86400</span><br><span class="line">@   IN  SOA     masterdns.xcluster.io. root.xcluster.io. (</span><br><span class="line">        2021010401  ;Serial</span><br><span class="line">        3600        ;Refresh</span><br><span class="line">        1800        ;Retry</span><br><span class="line">        604800      ;Expire</span><br><span class="line">        86400       ;Minimum TTL</span><br><span class="line">)</span><br><span class="line">@       IN  NS          masterdns.xcluster.io.</span><br><span class="line">@       IN  NS          secondarydns.xcluster.io.</span><br><span class="line">@       IN  A           192.168.99.100</span><br><span class="line">@       IN  A           192.168.99.101</span><br><span class="line">masterdns       IN  A   192.168.99.100</span><br><span class="line">secondarydns    IN  A   192.168.99.101</span><br><span class="line"></span><br><span class="line">worker-st.xcluster.io IN A 192.168.99.100</span><br><span class="line">worker-01.xcluster.io IN A 192.168.99.101</span><br><span class="line">worker-02.xcluster.io IN A 192.168.99.102</span><br><span class="line">worker-03.xcluster.io IN A 192.168.99.103</span><br><span class="line">worker-04.xcluster.io IN A 192.168.99.104</span><br><span class="line">worker-05.xcluster.io IN A 192.168.99.105</span><br></pre></td></tr></table></figure>
+
+<p>  其中16~21行是我们指定的A记录配置。</p>
+</li>
+<li><p><strong>/var/named/reverse.xcluster.io</strong>：</p>
+  <figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$TTL 86400</span><br><span class="line">@   IN  SOA     masterdns.xcluster.io. root.xcluster.io. (</span><br><span class="line">        2021010401  ;Serial</span><br><span class="line">        3600        ;Refresh</span><br><span class="line">        1800        ;Retry</span><br><span class="line">        604800      ;Expire</span><br><span class="line">        86400       ;Minimum TTL</span><br><span class="line">)</span><br><span class="line">@       IN  NS          masterdns.xcluster.io.</span><br><span class="line">@       IN  NS          secondarydns.xcluster.io.</span><br><span class="line">@       IN  PTR         xcluster.io.</span><br><span class="line">100     IN  PTR         masterdns.xcluster.io.</span><br><span class="line">101     IN  PTR         secondarydns.xcluster.io.</span><br><span class="line">masterdns       IN  A   192.168.99.100</span><br><span class="line">secondarydns    IN  A   192.168.99.101</span><br><span class="line"></span><br><span class="line">100  			IN PTR  worker-st.xcluster.io    # 注意到第一列是IP地址里面的地址号</span><br><span class="line">101  			IN PTR  worker-01.xcluster.io</span><br><span class="line">102  			IN PTR  worker-02.xcluster.io</span><br><span class="line">103  			IN PTR  worker-03.xcluster.io</span><br><span class="line">104  			IN PTR  worker-04.xcluster.io</span><br><span class="line">105  			IN PTR  worker-05.xcluster.io</span><br></pre></td></tr></table></figure>
+
+<p>  其中17~22行是我们指定的反向记录配置。</p>
+  <br>
+
+</li>
+</ul>
+<h5 id="配置Slave"><a href="#配置Slave" class="headerlink" title="配置Slave"></a>配置Slave</h5><p>类似Master的配置，编辑配置文件<code>/etc/named.conf</code>，在<code>listen-on</code>当中添加DNS Slave的IP地址（本机IP：192.168.99.101）、添加<code>allow-query</code>（这里没有了<code>allow-transfer</code>）选项，并添加我们即将配置的<code>xcluster.io</code>域名的<strong>zone</strong>配置文件路径；添加后如下：</p>
+<figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">options &#123;</span><br><span class="line">    listen-on port 53 &#123; 127.0.0.1; 192.168.99.100;&#125;;</span><br><span class="line">    <span class="hljs-comment"># 省略其他配置</span></span><br><span class="line">    include "/etc/named/xcluster.io.zones";</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意，<code>/etc/named/xcluster.io.zones</code>的内容和master中的将有所不同：</p>
+<figure class="highlight hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">zone "xcluster.io" IN &#123;</span><br><span class="line">    type slave;</span><br><span class="line">    file "slaves/forword.xcluster";</span><br><span class="line">    masters &#123; 192.168.99.100; &#125;;</span><br><span class="line">&#125;;</span><br><span class="line">zone "99.168.192.in-addr.arpa" IN &#123;</span><br><span class="line">    type slave;</span><br><span class="line">    file "slaves/reverse.xcluster";</span><br><span class="line">    masters &#123; 192.168.99.100; &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>配置完以后，Slave将根据该配置自动从Master中同步<code>xcluster.io</code>的zones配置，同步过来的配置存放在<code>/var/named/slaves</code>文件夹下。</p>
+<br>
+
+<h5 id="配置检查"><a href="#配置检查" class="headerlink" title="配置检查"></a>配置检查</h5><p>通过<code>named-checkconf</code>命令检查conf文件配置是否合法（合法时无输出），通过<code>named-checkzone</code>命令检查zone配置是否合法（合法时输出如下）：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo named-checkconf /etc/named.conf</span><br><span class="line"><span class="hljs-meta">$</span> sudo named-checkzone xcluster.io /var/named/forward.xcluster</span><br><span class="line">zone xcluster.io/IN: loaded serial 2021010401</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="防火墙和SELinux设置"><a href="#防火墙和SELinux设置" class="headerlink" title="防火墙和SELinux设置"></a>防火墙和SELinux设置</h4><p>如果Master、Slave启用了防火墙和SELinux，则需要做如下配置：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo firewall-cmd --permanent --add-port=53/tcp</span><br><span class="line"><span class="hljs-meta">$</span> sudo firewall-cmd --reload</span><br><span class="line"></span><br><span class="line"><span class="hljs-meta">$</span> sudo chgrp named -R /var/named</span><br><span class="line"><span class="hljs-meta">$</span> sudo restorecon -rv /var/named</span><br></pre></td></tr></table></figure>
+
+<br>
+
+<h4 id="修改配置使用该DNS服务"><a href="#修改配置使用该DNS服务" class="headerlink" title="修改配置使用该DNS服务"></a>修改配置使用该DNS服务</h4><p>在集群设置中，我们使用了两张网卡(eth0和eth1)，其中eth0是DHCP方式分配IP，eth1是静态分配，在集群各个机器的<code>/etc/sysconfig/network-scripts</code>目录下修改<code>ifcfg-eth0</code>和<code>ifcfg-eth1</code>两个网卡的内容，指定DNS：</p>
+<figure class="highlight ini hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-attr">PEERDNS</span>=<span class="hljs-string">"no"</span></span><br><span class="line"><span class="hljs-attr">DNS1</span>=<span class="hljs-string">"192.168.99.100"</span></span><br><span class="line"><span class="hljs-attr">DNS2</span>=<span class="hljs-string">"192.168.99.101"</span></span><br></pre></td></tr></table></figure>
+
+<p>重启网络：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">$</span> sudo systemctl restart network</span><br></pre></td></tr></table></figure>
+
+<p>查看<code>/etc/resolv.conf</code>，发现已经被修改为使用了我们配置的DNS服务：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="hljs-meta">#</span> Generated by NetworkManager</span><br><span class="line">search xcluster.io</span><br><span class="line">nameserver 192.168.99.100</span><br><span class="line">nameserver 192.168.99.101</span><br></pre></td></tr></table></figure>
+
+<p>在master、salve上通过<code>dig</code>命令查询配置的DNS记录信息：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">[root@Worker-01 network-scripts]# dig masterdns.xcluster.io</span><br><span class="line"></span><br><span class="line">; &lt;&lt;&gt;&gt; DiG 9.11.4-P2-RedHat-9.11.4-26.P2.el7_9.3 &lt;&lt;&gt;&gt; masterdns.xcluster.io</span><br><span class="line">;; global options: +cmd</span><br><span class="line">;; Got answer:</span><br><span class="line">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 62978</span><br><span class="line">;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 2, ADDITIONAL: 2</span><br><span class="line"></span><br><span class="line">;; OPT PSEUDOSECTION:</span><br><span class="line">; EDNS: version: 0, flags:; udp: 4096</span><br><span class="line">;; QUESTION SECTION:</span><br><span class="line">;masterdns.xcluster.io.		IN	A</span><br><span class="line"></span><br><span class="line">;; ANSWER SECTION:</span><br><span class="line">masterdns.xcluster.io.	86400	IN	A	192.168.99.100</span><br><span class="line"></span><br><span class="line">;; AUTHORITY SECTION:</span><br><span class="line">xcluster.io.		86400	IN	NS	secondarydns.xcluster.io.</span><br><span class="line">xcluster.io.		86400	IN	NS	masterdns.xcluster.io.</span><br><span class="line"></span><br><span class="line">;; ADDITIONAL SECTION:</span><br><span class="line">secondarydns.xcluster.io. 86400	IN	A	192.168.99.101</span><br><span class="line"></span><br><span class="line">;; Query time: 1 msec</span><br><span class="line">;; SERVER: 192.168.99.100#53(192.168.99.100)</span><br><span class="line">;; WHEN: Mon Jan 04 14:27:48 CST 2021</span><br><span class="line">;; MSG SIZE  rcvd: 123</span><br><span class="line"></span><br><span class="line">[root@Worker-01 network-scripts]#</span><br></pre></td></tr></table></figure>
+
+<p>可以看到18、19行就是我们刚配置的nameserver，PING一个域名看看结果：</p>
+<figure class="highlight shell hljs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@Worker-01 network-scripts]# ping worker-st.xcluster.io</span><br><span class="line">PING worker-st.xcluster.io.xcluster.io (192.168.99.100) 56(84) bytes of data.</span><br><span class="line">64 bytes from worker-st.xcluster.io.99.168.192.in-addr.arpa (192.168.99.100): icmp_seq=1 ttl=64 time=0.274 ms</span><br><span class="line">64 bytes from worker-st.xcluster.io.99.168.192.in-addr.arpa (192.168.99.100): icmp_seq=2 ttl=64 time=0.575 ms</span><br><span class="line">64 bytes from worker-st.xcluster.io.99.168.192.in-addr.arpa (192.168.99.100): icmp_seq=3 ttl=64 time=0.294 ms</span><br><span class="line">64 bytes from worker-st.xcluster.io.99.168.192.in-addr.arpa (192.168.99.100): icmp_seq=4 ttl=64 time=0.370 ms</span><br><span class="line">^C</span><br><span class="line">--- worker-st.xcluster.io.xcluster.io ping statistics ---</span><br><span class="line">4 packets transmitted, 4 received, 0% packet loss, time 3005ms</span><br><span class="line">rtt min/avg/max/mdev = 0.274/0.378/0.575/0.119 ms</span><br><span class="line">[root@Worker-01 network-scripts]#</span><br></pre></td></tr></table></figure>
+
+<p>从结果可以看到域名是从worker-st.xcluster.io.99.168.192.in-addr.arpa解析出来的，域名服务器搭建完成。</p>
+<br>
+
+<h4 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h4><ul>
+<li><a href="https://www.unixmen.com/setting-dns-server-centos-7/" target="_blank" rel="noopener">https://www.unixmen.com/setting-dns-server-centos-7/</a></li>
+<li><a href="https://help.dyn.com/how-to-format-a-zone-file/" target="_blank" rel="noopener">https://help.dyn.com/how-to-format-a-zone-file/</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Domain_Name_System" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Domain_Name_System</a></li>
 </ul>
 
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/CentOS/">CentOS</a>, <a class="has-link-grey -link" href="/tags/DNS/">DNS</a>, <a class="has-link-grey -link" href="/tags/Linux/">Linux</a>
+                </div>
+            </div>
         </div>
         
         
@@ -210,6 +370,27 @@
 
 
 
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2020/12/26/f586b25f145a49b6b.html">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">Kubernetes集群搭建</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2019/03/01/b7863297bbd9f2f618.html">
+                <span class="level-item">MySQL与Postgres的比较</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
 
 
 <div class="card">
@@ -218,8 +399,8 @@
         
 <script>
     var disqus_config = function () {
-        this.page.url = 'https://i36.Me/about/index.html';
-        this.page.identifier = '84ca23cd1322423ba';
+        this.page.url = 'https://i36.Me/2020/12/26/9bf8861aca85e8311.html';
+        this.page.identifier = '9bf8861aca85e8311';
     };
     (function() {
         var d = document, s = d.createElement('script');  
@@ -249,6 +430,51 @@
         <div class="column-right-shadow  ">
             
                 
+<!-- <div class="card widget" id="toc" style="max-height: 500px; overflow: auto;"> -->
+<div class="card widget" id="toc" style="overflow: auto;">
+    <div class="card-content">
+        <div class="menu" style="max-height: 500px; overflow: auto;">
+            <h3 class="menu-label">
+                目录
+            </h3>
+            <ul class="menu-list"><li>
+        <a href="#安装DNS-Server">
+        <span class="has-mr-6">1</span>
+        <span>安装DNS Server</span>
+        </a></li><li>
+        <a href="#配置DNS-Server">
+        <span class="has-mr-6">2</span>
+        <span>配置DNS Server</span>
+        </a>&nbsp&nbsp<i class="fa fa-chevron-down"></i>
+            <i class="fa fa-chevron-right"></i><ul class="menu-list"><li>
+        <a href="#配置Master">
+        <span class="has-mr-6">2.1</span>
+        <span>配置Master</span>
+        </a></li><li>
+        <a href="#配置Slave">
+        <span class="has-mr-6">2.2</span>
+        <span>配置Slave</span>
+        </a></li><li>
+        <a href="#配置检查">
+        <span class="has-mr-6">2.3</span>
+        <span>配置检查</span>
+        </a></li></ul></li><li>
+        <a href="#防火墙和SELinux设置">
+        <span class="has-mr-6">3</span>
+        <span>防火墙和SELinux设置</span>
+        </a></li><li>
+        <a href="#修改配置使用该DNS服务">
+        <span class="has-mr-6">4</span>
+        <span>修改配置使用该DNS服务</span>
+        </a></li><li>
+        <a href="#参考文档">
+        <span class="has-mr-6">5</span>
+        <span>参考文档</span>
+        </a></li></ul>
+        </div>
+    </div>
+</div>
+
             
                 
 <div class="card widget">
@@ -896,7 +1122,7 @@
             <div class="level-start has-text-centered-mobile">
                 <a class="footer-logo is-block has-mb-6" href="/">
                 
-                    <img src="/images/logo.png" alt="关于我" height="28">
+                    <img src="/images/logo.png" alt="在CentOS集群上部署DNS服务" height="28">
                 
                 </a>
                 <p class="is-size-7" style="padding-bottom: 0.5em">
